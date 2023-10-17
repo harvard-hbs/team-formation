@@ -14,7 +14,7 @@ setup(
     author="Brent Benson",
     license="MIT",
     install_requires=[
-        "pandas",
-        "ortools",
+        "pandas>=2.0",
+        "ortools>=9.2",
     ],
 )
