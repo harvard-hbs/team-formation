@@ -1,0 +1,10 @@
+id,gender,job_function,working_time
+8,Male,Manager,"['00-05', '20-24']"
+9,Male,Executive,"['10-15', '15-20']"
+10,Female,Executive,['15-20']
+16,Male,Manager,"['15-20', '20-24']"
+18,Female,Contributor,"['05-10', '10-15']"
+20,Female,Manager,"['15-20', '20-24']"
+21,Male,Executive,['15-20']
+29,Male,Contributor,"['05-10', '10-15']"
+31,Female,Contributor,['05-10']
