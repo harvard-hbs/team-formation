@@ -22,17 +22,27 @@ def test_small():
               ["job_function", "cluster", 1],
               ["working_time", "cluster", 1]]
     )
-    # constraints = {
-    #     "gender": {"type": "diversify", "weight": 1},
-    #     "job_function": {"type": "cluster", "weight": 1},
-    #     "working_time": {"type": "cluster", "weight": 1},
-    # }
     print(participants)
     ta = TeamAssignment(
         participants,
         constraints,
         target_team_size)
+
+    # Check matching number of participants
+    assert(ta.num_participants == len(participants))
+    # No solution should be found yet
+    assert(not ta.solution_found)
+    
     ta.solve()
+
+    # Solution should be found
+    assert(ta.solution_found)
+    # Resulting teams should all be of size 3
+    assert(all(ta.participants["team_num"].value_counts() == 3))
+    
     print(ta.participants.sort_values("team_num"))
     team_eval = ta.evaluate_teams()
+
+    # There should be only one miss
+    assert(sum(team_eval["missed"] > 0) == 1)
     print(team_eval)
