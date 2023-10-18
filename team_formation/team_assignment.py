@@ -4,20 +4,20 @@
 # title: Team Formation as Constraint Satisfaction
 # ---
 # ## Problem Statement
-# 
+#
 # Dividing a large learning cohort into smaller teams for group work,
 # discussion, or other activity is a common requirement in many learning
 # contexts. It is easy to automate the formation of randomly assigned
 # teams, but there can be rules, guidelines, and goals guiding the
 # desired team composition to support learning objectives and other
 # goals which can complicate manual and automated team creation.
-# 
+#
 # The approach described in this document provides a technical framework
 # and implementation to support specifying team formation objectives in
 # a declarative fashion and can automatically generate teams based on
 # those objectives. There is also a description of how to measure and
 # evaluate the created teams with respect to the specified objectives.
-# 
+#
 # The team formation objectives currently supported are team size and
 # *diversification* and *clustering* around participant
 # attributes. *Diversification* in this context is defined as the goal
@@ -28,46 +28,46 @@
 # achieve 60/40 female/male percentages on each team or, more
 # specifically, to achieve the female/male participant counts that are
 # closest to 60%/40% for the particular team size.
-# 
+#
 # *Clustering* is defined as the goal of having all team members share a
 # particular attribute value. For example, if there is a `job_function`
 # attribute with values of `Contributor`, `Manager`, and `Executive` a
 # clustering goal would be to have each team contain participants with a
 # single value of the `job_function` attribute to facilitate sharing
 # of common experiences.
-# 
+#
 # Cluster variables can also be multi-valued indicated by a list of
 # acceptable values for the participant. For example, if there is a
 # `working_time` variable with hour ranges `00-05`, `05-10`, `10-15`,
 # `15-20`, and `20-24`. A participant might have the values `["00-05",
 # "20-24"]` indicating that both those time ranges are acceptable.
-# 
+#
 # In order to balance possibly conflicting objectives and goals of the
 # team formation process we allow a weight to specified for each
 # constraint to indicate the priority of the objective in relation
 # to the others.
-# 
+#
 # ## Team Formation as Constraint Satisfaction using CP-SAT
-# 
+#
 # The problem of dividing participants into specified team sizes guided
 # by diversity and clustering constraints can be stated as a [Constraint
 # Satisfaction
 # Problem](https://en.wikipedia.org/wiki/Constraint_satisfaction_problem)
 # (CSP) with a set of variables with integer domains and constraints on
 # the allowed combinations.
-# 
+#
 # There is a very efficient constraint solver that uses a variety of
 # constraint solving techniques from the Google Operational Research
 # team called [Google OR-Tools
 # CP-SAT](https://developers.google.com/optimization/cp/cp_solver) that
 # we are using for this team assignment problem.
-# 
+#
 # The remainder of the document describes how to frame the team
 # formation problem in the CP-SAT constraint model to be solved by the
 # CP-SAT solver.
-# 
+#
 # ## Input Data
-# 
+#
 # The input to the team formation process is a set of participants with
 # category-valued attributes, a target team size, and a set of
 # constraints. The specification of the constraints is done with a
@@ -83,8 +83,9 @@ from collections import Counter, defaultdict
 
 from ortools.sat.python import cp_model
 
+
 # ## Problem Representation
-# 
+#
 # We will represent the problem as an instance of the `TeamAssignment`
 # class containing related data and methods to create the CP-SAT
 # variables and constraints.
@@ -108,11 +109,6 @@ class TeamAssignment:
                   [29, "Male", "Contributor", ["05-10", "10-15"]],
                   [31, "Female", "Contributor", ["05-10"]]]
         )
-    >>> constraints = {
-            "gender": {"type": "diversify", "weight": 1},
-            "job_function": {"type": "cluster", "weight": 1},
-            "working_time": {"type": "cluster", "weight": 1},
-        }
     >>> constraints = pd.DataFrame(
             columns=["attribute", "type", "weight"],
             data=[["gender", "diversify", 1],
@@ -151,12 +147,10 @@ class TeamAssignment:
     CT_DIVERSIFY = "diversify"
     CT_CLUSTER = "cluster"
     CONSTRAINT_TYPES = [CT_DIVERSIFY, CT_CLUSTER]
-    
-    def __init__(self,
-                 participants,
-                 constraints,
-                 target_team_size,
-                 less_than_target=False):
+
+    def __init__(
+        self, participants, constraints, target_team_size, less_than_target=False
+    ):
         ## The CP-SAT model for creating variables and constraints
         self.model = cp_model.CpModel()
 
@@ -168,9 +162,7 @@ class TeamAssignment:
         self.num_participants = len(self.participants)
 
         ## Input Data:
-        self.attr_constraints = (constraints
-                                 .set_index("attribute")
-                                 .to_dict("index"))
+        self.attr_constraints = constraints.set_index("attribute").to_dict("index")
         for attr_name in self.attr_constraints:
             ct_type = self.attr_constraints[attr_name]["type"]
             if ct_type not in self.CONSTRAINT_TYPES:
@@ -185,25 +177,21 @@ class TeamAssignment:
         # ### Team Sizes
         #
         self.team_sizes = calc_team_sizes(
-            self.num_participants,
-            self.target_team_size,
-            self.less_than_target
+            self.num_participants, self.target_team_size, self.less_than_target
         )
         self.num_teams = len(self.team_sizes)
 
         # ### Attribute Value Boolean Variable Names
-        # 
+        #
         # Turn the categorical attribute values
         # into a set of boolean variables names
         self.attr_vals = {}
         for attr_name in self.attr_names:
-            bool_vars = categories_to_bool_vars(
-                attr_name,
-                self.participants[attr_name])
+            bool_vars = categories_to_bool_vars(attr_name, self.participants[attr_name])
             self.attr_vals[attr_name] = bool_vars
 
         # ### Participant Variables
-        # 
+        #
         # Next we create the `parti_vars` array with one entry for each
         # participant. Each particpant's entry in the array contains a map from
         # attribute name to the list of CP-SAT boolean variables indicating
@@ -224,8 +212,9 @@ class TeamAssignment:
                 else:
                     verb = "is"
                     parti_vals = [parti_vals]
-                attr_vals = [make_attr_value_name(attr_name, pv, verb)
-                             for pv in parti_vals]
+                attr_vals = [
+                    make_attr_value_name(attr_name, pv, verb) for pv in parti_vals
+                ]
                 for bool_var_cat in self.attr_vals[attr_name]:
                     bool_var = self.model.NewBoolVar(bool_var_cat)
                     bool_vars.append(bool_var)
@@ -237,14 +226,14 @@ class TeamAssignment:
             self.parti_vars.append(attr_vars)
 
         # ### Team Assignment Constraints
-        # 
+        #
         # We have already calculated the size of each team reflected in the
         # `team_sizes` variable that is indexed by team number and holds the
         # size of each team. We now create an array of `num_teams` boolean
         # variables for each participant indicating whether that participant is
         # on the corresponding team. That array of team assignment variables is
         # put in the `parti_vars` map of each participant with the key `"team"`.
-        # 
+        #
         # We also add a constraint that the sum of each participant's team
         # boolean variables must be `1` (a participant can only be on one team)
         # and another constraint that the sum of each of the boolean variables for
@@ -264,31 +253,35 @@ class TeamAssignment:
 
         ## Enforce desired team size on each team
         for team_num, team_size in enumerate(self.team_sizes):
-            team_vars = [self.parti_vars[id]["team"][team_num]
-                         for id in range(self.num_participants)]
+            team_vars = [
+                self.parti_vars[id]["team"][team_num]
+                for id in range(self.num_participants)
+            ]
             self.model.Add(cp_model.LinearExpr.Sum(team_vars) == team_size)
 
         # ### Team Attribute Value Count Variables
-        # 
+        #
         # Both the diversity and clustering constraints used for team formation
         # are defined in terms of team-by-team attribute value counts. We use a
         # `team_vars` map keyed by the attribute name with an array value
         # indexed by team; for each team there is an array indexed by attribute
         # value containing an integer variable representing the count of
         # that attribute value in the corresponding team.
-        # 
+        #
         # [Describe the mechanism for calculating the counts here.]
-        # 
+        #
         # The count of the number of females in team `0` is
         # `team_vars["gender"][0][0]`.
 
         ## Create the map from attribute names to array of teams
         ## containing attribute value counts.
-        self.team_vars = {attr_name: self.create_attr_counts(attr_name)
-                          for attr_name in self.attr_names}
+        self.team_vars = {
+            attr_name: self.create_attr_counts(attr_name)
+            for attr_name in self.attr_names
+        }
 
         # ### Team Diversity and Clustering Constraints
-        # 
+        #
         # While all of the constraints defined so far have been all or nothing
         # and necessary for the proper functioning of the model (for example,
         # the setting of the participant attribute values and team sizes) the
@@ -298,9 +291,9 @@ class TeamAssignment:
         # over-constraining the model and letting the constraint engine take
         # into account the weights, providing a solution as close as we can get
         # given the participants and their provided attributes.
-        # 
+        #
         # #### Diversity
-        # 
+        #
         # We consider a team to be ideally diverse with respect to a particular
         # attribute when the distribution of each attribute value is the same in
         # the team as it is in the entire participant population. For example if
@@ -311,11 +304,11 @@ class TeamAssignment:
         # team and define the cost function as the absolute value of the
         # difference from the target count, summed across all the variables and
         # multipled by the constraint weight.
-        # 
+        #
         # We define a `population_distribution` method that returns the
         # percentage of each attribute in the full population and then cache
         # that in a `population_dist` map for later use.
-        # 
+        #
         # The `value_count_targets` method uses the population distribution and
         # a team size to return the ideal count for each attribute value in a
         # team of a particular team size. It is important that rounding be used
@@ -327,11 +320,12 @@ class TeamAssignment:
         for attr_name in self.attr_constraints:
             constraint = self.attr_constraints[attr_name]
             if constraint["type"] == self.CT_DIVERSIFY:
-                self.population_dist[attr_name] = (
-                    self.population_distribution(attr_name))
+                self.population_dist[attr_name] = self.population_distribution(
+                    attr_name
+                )
 
         # #### Clustering
-        # 
+        #
         # We consider a team to be ideal with respect to an attribute clustering
         # constraint if all of the members of the team have a single value for
         # that attribute. For example, if the `job_function` attribute has
@@ -344,13 +338,13 @@ class TeamAssignment:
         # clustering cost function to be the difference between the maximum of a
         # team's attribute value counts as the team size, summed across all of
         # the teams and multiplied by the constraint weight.
-        # 
+        #
         # [Put some more details about the calculation mechanism here.]
-        # 
+        #
         # The cost constraints variables are kept in a flat list containing all
         # of the cost variables. We also calculate the population distributions
         # for the diversity constraints in this step.
-        # 
+        #
 
         # Diversity constraints rely on a measurement of the distribution
         # of the attribute values across the entire population.
@@ -362,7 +356,9 @@ class TeamAssignment:
         for attr_name in self.attr_constraints:
             constraint = self.attr_constraints[attr_name]
             if constraint["type"] == self.CT_DIVERSIFY:
-                self.population_dist[attr_name] = self.population_distribution(attr_name)
+                self.population_dist[attr_name] = self.population_distribution(
+                    attr_name
+                )
                 costs = self.create_diversity_costs(attr_name)
             if constraint["type"] == self.CT_CLUSTER:
                 costs = self.create_clustering_costs(attr_name)
@@ -374,13 +370,22 @@ class TeamAssignment:
         #
         # The last step before solving for team assignments is informing the model
         # of the need to minimize the sum of the cost variables.
-        # 
-        self.model.Minimize(cp_model.LinearExpr.Sum(self.attr_costs))    
+        #
+        self.model.Minimize(cp_model.LinearExpr.Sum(self.attr_costs))
+
+    def __repr__(self):
+        repr = (
+            f"TeamAssignment(n={self.num_participants}, "
+            f"constraints={len(self.attr_constraints)}, "
+            f"target={self.target_team_size}, "
+            f"solution={self.solution_found})"
+        )
+        return repr
 
     # ## Methods
     #
     # ### Team Attribute Value Count Variables
-    # 
+    #
     def create_attr_counts(self, attr_name):
         """Create attribute value counts for each team."""
         team_attr_counts = []
@@ -390,15 +395,18 @@ class TeamAssignment:
             for attr_val_index, attr_val in enumerate(attr_vals):
                 parti_counts = []
                 team_attr_count = self.model.NewIntVar(
-                    0,
-                    team_size,
-                    f"team_{team_num}_{attr_val}_count")
+                    0, team_size, f"team_{team_num}_{attr_val}_count"
+                )
                 for id in range(self.num_participants):
                     team_var = self.parti_vars[id]["team"][team_num]
                     attr_var = self.parti_vars[id][attr_name][attr_val_index]
-                    parti_count = self.model.NewBoolVar("parti_{id}_team_{team_num}_{attr_val}")
+                    parti_count = self.model.NewBoolVar(
+                        "parti_{id}_team_{team_num}_{attr_val}"
+                    )
                     # Use team_var*attr_var to calculate And(team_var, attr_var)
-                    self.model.AddMultiplicationEquality(parti_count, [team_var, attr_var])
+                    self.model.AddMultiplicationEquality(
+                        parti_count, [team_var, attr_var]
+                    )
                     # This is an alternative that doesn't seem to perform as well
                     # self.model.Add(parti_count == attr_var).OnlyEnforceIf(team_var)
                     # self.model.Add(parti_count == 0).OnlyEnforceIf(team_var.Not())
@@ -409,11 +417,11 @@ class TeamAssignment:
         return team_attr_counts
 
     # ### Team Diversity and Clustering Constraints
-    # 
+    #
     def population_distribution(self, attr_name):
-        pop_dist = (self.participants[attr_name]
-                    .value_counts(normalize=True)
-                    .sort_index())
+        pop_dist = (
+            self.participants[attr_name].value_counts(normalize=True).sort_index()
+        )
         return pop_dist
 
     def value_count_targets(self, attr_name, team_size):
@@ -430,39 +438,36 @@ class TeamAssignment:
             targets = self.value_count_targets(attr_name, team_size)
             for val in range(num_values - 1):
                 cost_var = self.model.NewIntVar(
-                    0,
-                    team_size,
-                    f"{attr_name}_cost_{team_num}_{val}")
+                    0, team_size, f"{attr_name}_cost_{team_num}_{val}"
+                )
                 self.model.AddAbsEquality(
                     cost_var,
-                    (self.team_vars[attr_name][team_num][val] -
-                     targets.iloc[val]))
+                    (self.team_vars[attr_name][team_num][val] - targets.iloc[val]),
+                )
                 diversity_costs.append(cost_var)
         return diversity_costs
 
     # #### Clustering
-    # 
+    #
     def create_clustering_costs(self, attr_name):
         """Create cost variables for clustering optimization."""
         clustering_costs = []
         for team_num, team_size in enumerate(self.team_sizes):
             max_count_var = self.model.NewIntVar(
-                0,
-                team_size,
-                f"{attr_name}_max_count[{team_num}]")
+                0, team_size, f"{attr_name}_max_count[{team_num}]"
+            )
             cost_var = self.model.NewIntVar(
-                0,
-                team_size,
-                f"{attr_name}_cost[{team_num}]")
+                0, team_size, f"{attr_name}_cost[{team_num}]"
+            )
             self.model.AddMaxEquality(
-                max_count_var,
-                self.team_vars[attr_name][team_num])
+                max_count_var, self.team_vars[attr_name][team_num]
+            )
             self.model.Add(cost_var == (team_size - max_count_var))
             clustering_costs.append(cost_var)
         return clustering_costs
 
     # ## Solving the Model
-    # 
+    #
     # The `solve` method creates a `CpSolver` object and calls its `solve`
     # method on the model we have created. The status is checked for an
     # optimal or feasible solution and, if found, the team assignments
@@ -473,8 +478,9 @@ class TeamAssignment:
         # This alternative is for establishing a callback for interrupting before
         # an optimal solution is found.
         self.status = self.solver.Solve(self.model, solution_callback=solution_callback)
-        self.solution_found = ((self.status == cp_model.OPTIMAL) or
-                               (self.status == cp_model.FEASIBLE))
+        self.solution_found = (self.status == cp_model.OPTIMAL) or (
+            self.status == cp_model.FEASIBLE
+        )
         if not self.solution_found:
             print(f"Warning: solution was not found: {self.status}")
         else:
@@ -486,7 +492,7 @@ class TeamAssignment:
             self.participants["team_num"] = team_assignments
 
     # ## Evaluating Team Assignments
-    # 
+    #
     # The primary way to evaluate the team assignments is to do a
     # team-by-team calculation for each attribute constraint to
     # determine how many participants have been mis-assigned
@@ -503,20 +509,22 @@ class TeamAssignment:
                 ct_type = self.attr_constraints[attr_name]["type"]
                 if ct_type == self.CT_DIVERSIFY:
                     pop_targets = self.value_count_targets(attr_name, team_size)
-                    team_partis = self.participants[self.participants["team_num"]
-                                                    == team_num]
-                    team_counts = (team_partis[attr_name]
-                                   .value_counts()
-                                   .sort_index())
-                    missed = ((pop_targets - team_counts)
-                              .fillna(0)
-                              # Only need of one pos/neg pair
-                              .pipe(lambda x: x[x > 0])
-                              .sum()
-                              .astype(int))
+                    team_partis = self.participants[
+                        self.participants["team_num"] == team_num
+                    ]
+                    team_counts = team_partis[attr_name].value_counts().sort_index()
+                    missed = (
+                        (pop_targets - team_counts)
+                        .fillna(0)
+                        # Only need of one pos/neg pair
+                        .pipe(lambda x: x[x > 0])
+                        .sum()
+                        .astype(int)
+                    )
                 elif ct_type == self.CT_CLUSTER:
-                    team_partis = self.participants[self.participants["team_num"]
-                                                    == team_num]
+                    team_partis = self.participants[
+                        self.participants["team_num"] == team_num
+                    ]
                     max_count = max_attr_value_count(team_partis[attr_name])
                     missed = team_size - max_count
                 team_info = {
@@ -530,6 +538,7 @@ class TeamAssignment:
         team_info = pd.DataFrame(team_info_list)
         return team_info
 
+
 class SolutionCallback(cp_model.CpSolverSolutionCallback):
     def __init__(self):
         cp_model.CpSolverSolutionCallback.__init__(self)
@@ -537,39 +546,43 @@ class SolutionCallback(cp_model.CpSolverSolutionCallback):
     def on_solution_callback(self):
         objective_value = self.ObjectiveValue()
         num_conflicts = self.NumConflicts()
-        print(f"Number of conflicts: {num_conflicts}, Objective value: {objective_value}")
-        
-    
+        print(
+            f"Number of conflicts: {num_conflicts}, Objective value: {objective_value}"
+        )
+
+
 # ## Functions
-#    
+#
 # ### Team Sizes
-# 
+#
 # The specification also needs to include a `target_team_size` and a
 # boolean `less_than_target` that should be true if the teams that are
 # not of the target size should be of smaller size, and false if the
 # non-target-sized teams should be larger.
+
 
 def calc_team_sizes(pop_size, target_size, less_than=True):
     if less_than:
         num_teams = (pop_size + target_size - 1) // target_size
         base_team_size = pop_size // num_teams
         extra_members = pop_size % num_teams
-        team_sizes = [(base_team_size + 1)
-                      if (i < extra_members)
-                      else base_team_size
-                      for i in range(num_teams)]
+        team_sizes = [
+            (base_team_size + 1) if (i < extra_members) else base_team_size
+            for i in range(num_teams)
+        ]
     else:
         num_teams = pop_size // target_size
         base_team_size = pop_size // num_teams
         extra_members = pop_size % num_teams
-        team_sizes = [base_team_size
-                      if (i >= extra_members)
-                      else (base_team_size + 1)
-                      for i in range(num_teams)]
+        team_sizes = [
+            base_team_size if (i >= extra_members) else (base_team_size + 1)
+            for i in range(num_teams)
+        ]
     return team_sizes
 
+
 # ### Attribute Value Boolean Variable Names
-# 
+#
 # Each of the attributes is incorporated into the model as a set of
 # boolean variables that indicates whether the attribute has that
 # particular value for a particular participant. We could have used an
@@ -577,9 +590,10 @@ def calc_team_sizes(pop_size, target_size, less_than=True):
 # attribute, a domain of `{0, 1, 2}` for three values, etc., but the
 # boolean "has-value" type of variable is the native form for the CP-SAT
 # solver, so that was used.
-# 
+#
 # First we create the `attr_vals` map from the attribute name to a list
 # of boolean attributes, one for each attribute value.
+
 
 def make_attr_value_name(attr_name, cat_value, verb):
     """Create simplified attribute value name"""
@@ -589,6 +603,7 @@ def make_attr_value_name(attr_name, cat_value, verb):
     attr_val_name = f"{attr_name}_{verb}_{val_name}"
     return attr_val_name
 
+
 def categories_to_bool_vars(attr_name, cat_values):
     if isinstance(cat_values.iloc[0], list):
         unique_cats = sorted(set(chain.from_iterable(cat_values)))
@@ -597,12 +612,13 @@ def categories_to_bool_vars(attr_name, cat_values):
         unique_cats = sorted(set(cat_values))
         verb = "is"
     val_names = [
-        make_attr_value_name(attr_name, cat_value, verb)
-        for cat_value in unique_cats]
+        make_attr_value_name(attr_name, cat_value, verb) for cat_value in unique_cats
+    ]
     return val_names
 
+
 # ## Evaluating Team Assignments
-# 
+#
 def max_attr_value_count(team_vals):
     if isinstance(team_vals.iloc[0], list):
         attr_vals = chain.from_iterable(team_vals)
@@ -610,4 +626,3 @@ def max_attr_value_count(team_vals):
         attr_vals = team_vals
     max_count = max(Counter(attr_vals).values())
     return max_count
-
