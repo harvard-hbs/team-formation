@@ -7,3 +7,4 @@ with open(version_file_path) as f:
     __version__ = f.read().strip()
 
 from .team_assignment import TeamAssignment, SolutionCallback
+from .working_time import working_times_hours
