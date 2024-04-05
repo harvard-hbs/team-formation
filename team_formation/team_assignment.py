@@ -75,8 +75,6 @@
 # keys, a type of `diversify` or `cluster`, and a numeric `weight`.
 
 import re
-import time
-import pprint
 import pandas as pd
 from itertools import chain
 from collections import Counter, defaultdict
@@ -363,7 +361,7 @@ class TeamAssignment:
             if constraint["type"] == self.CT_CLUSTER:
                 costs = self.create_clustering_costs(attr_name)
             if constraint["weight"] != 1:
-                costs = costs * constraint["weight"]
+                costs = [cost * constraint["weight"] for cost in costs]
             self.attr_costs += costs
 
         ## Minimize the sum of the cost variables
