@@ -16,5 +16,7 @@ setup(
     install_requires=[
         "pandas>=2.0",
         "ortools>=9.2",
+        "streamlit>=1.30",
+        "humanize>=4.9",
     ],
 )
