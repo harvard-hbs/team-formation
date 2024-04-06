@@ -70,3 +70,54 @@ category-valued attributes, a target team size, and a set of
 constraints. The specification of the constraints is done with a
 dictionary with keys attribute names from the `participants` data frame as
 keys, a type of `diversify` or `cluster`, and a numeric `weight`.
+
+## Example
+
+```
+    >>> from team_assignment import TeamAssignment
+    >>> import pandas as pd
+    >>> participants = pd.DataFrame(
+            columns=["id", "gender", "job_function", "working_time"],
+            data=[[8, "Male", "Manager", ["00-05", "20-24"]],
+                  [9, "Male", "Executive", ["10-15", "15-20"]],
+                  [10, "Female", "Executive", ["15-20"]],
+                  [16, "Male", "Manager", ["15-20", "20-24"]],
+                  [18, "Female", "Contributor", ["05-10", "10-15"]],
+                  [20, "Female", "Manager", ["15-20", "20-24"]],
+                  [21, "Male", "Executive", ["15-20"]],
+                  [29, "Male", "Contributor", ["05-10", "10-15"]],
+                  [31, "Female", "Contributor", ["05-10"]]]
+        )
+    >>> constraints = pd.DataFrame(
+            columns=["attribute", "type", "weight"],
+            data=[["gender", "diversify", 1],
+                  ["job_function", "cluster", 1],
+                  ["working_time", "cluster", 1]]
+        )
+    >>> target_team_size = 3
+    >>> ta = TeamAssignment(participants, constraints, target_team_size)
+    >>> ta.solve()
+    >>> ta.participants.sort_values("team_num")
+       id  gender job_function    working_time  team_num
+    4  18  Female  Contributor  [05-10, 10-15]         0
+    7  29    Male  Contributor  [05-10, 10-15]         0
+    8  31  Female  Contributor         [05-10]         0
+    0   8    Male      Manager  [00-05, 20-24]         1
+    3  16    Male      Manager  [15-20, 20-24]         1
+    5  20  Female      Manager  [15-20, 20-24]         1
+    1   9    Male    Executive  [10-15, 15-20]         2
+    2  10  Female    Executive         [15-20]         2
+    6  21    Male    Executive         [15-20]         2
+    >>> ta.evaluate_teams()
+       team_num  team_size     attr_name       type  missed
+    0         0          3        gender  diversify       1
+    1         0          3  job_function    cluster       0
+    2         0          3  working_time    cluster       0
+    3         1          3        gender  diversify       0
+    4         1          3  job_function    cluster       0
+    5         1          3  working_time    cluster       0
+    6         2          3        gender  diversify       0
+    7         2          3  job_function    cluster       0
+    8         2          3  working_time    cluster       0
+    >>>
+```

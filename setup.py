@@ -19,4 +19,7 @@ setup(
         "streamlit>=1.30",
         "humanize>=4.9",
     ],
+    package_data={
+        "team_formation": ["_version.txt"],
+    }
 )
