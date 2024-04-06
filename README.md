@@ -71,7 +71,10 @@ constraints. The specification of the constraints is done with a
 dictionary with keys attribute names from the `participants` data frame as
 keys, a type of `diversify` or `cluster`, and a numeric `weight`.
 
-## Example
+## API
+
+- [API Documentation](https://harvard-hbs.github.io/team-formation)
+
 
 ```
     >>> from team_assignment import TeamAssignment
