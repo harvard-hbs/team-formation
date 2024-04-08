@@ -141,42 +141,49 @@ class TeamAssignment:
     >>>
     """
 
-    # Constraint Types
     CT_DIVERSIFY = "diversify"
+    """String representing diversify constraints"""
     CT_CLUSTER = "cluster"
+    """String representing cluster constraints"""
     CONSTRAINT_TYPES = [CT_DIVERSIFY, CT_CLUSTER]
+    """List of all constraints types."""
 
     def __init__(
         self, participants, constraints, target_team_size, less_than_target=False
     ):
-        ## The CP-SAT model for creating variables and constraints
+        
         self.model = cp_model.CpModel()
+        """The CP-SAT model for creating variables and constraints"""
 
-        ## THe `solve` method will set this to `True` if a solution is found
         self.solution_found = False
-
-        ## Input Data:
+        """The `solve` method will set this to `True` if a solution is found"""
+        
         self.participants = participants
-        self.num_participants = len(self.participants)
+        """Input variable: participants with attributes"""
 
-        ## Input Data:
+        self.num_participants = len(self.participants)
+        """Number of participants"""
+
         self.attr_constraints = constraints.set_index("attribute").to_dict("index")
+        """Input variable: constraints with name, type, and priority"""
+        
         for attr_name in self.attr_constraints:
             ct_type = self.attr_constraints[attr_name]["type"]
             if ct_type not in self.CONSTRAINT_TYPES:
                 raise ValueError("Unknown constraint type", ct_type)
         self.attr_names = list(self.attr_constraints.keys())
 
-        ## Input Data:
+        #: Input variable: desired target team size
         self.target_team_size = target_team_size
-        ## Team sizes slightly smaller or larger than target
+
+        #: Input variable: make non-target-size teams one bigger or smaller
         self.less_than_target = False
 
-        # ### Team Sizes
-        #
+        #: Calculated sizes of the teams
         self.team_sizes = calc_team_sizes(
             self.num_participants, self.target_team_size, self.less_than_target
         )
+        #: Number of teams
         self.num_teams = len(self.team_sizes)
 
         # ### Attribute Value Boolean Variable Names
