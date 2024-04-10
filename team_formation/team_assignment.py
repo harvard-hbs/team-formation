@@ -610,6 +610,8 @@ def make_attr_value_name(attr_name, cat_value, verb):
 
 
 def categories_to_bool_vars(attr_name, cat_values):
+    if sum(cat_values.isnull()) > 0:
+        raise ValueError("Missing values for attribute", attr_name)
     if isinstance(cat_values.iloc[0], list):
         unique_cats = sorted(set(chain.from_iterable(cat_values)))
         verb = "has"
