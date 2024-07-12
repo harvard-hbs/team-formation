@@ -10,6 +10,8 @@ setup(
         "A tool to form teams from a larger group based "
         "on clustering and diversity constraints"
     ),
+    long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
     url="https://github.com/harvard-hbs/team-formation/",
     author="Brent Benson",
     license="MIT",

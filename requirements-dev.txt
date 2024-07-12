@@ -3,4 +3,5 @@ ortools
 streamlit
 humanize
 pytest
+setuptools
 twine
