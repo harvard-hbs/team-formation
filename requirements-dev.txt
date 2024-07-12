@@ -1,0 +1,6 @@
+pandas
+ortools
+streamlit
+humanize
+pytest
+twine
