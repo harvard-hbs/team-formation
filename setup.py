@@ -4,7 +4,7 @@ with open("team_formation/_version.txt") as f:
     version = f.read().strip()
 
 setup(
-    name="team_formation",
+    name="team-formation",
     version=version,
     description=(
         "A tool to form teams from a larger group based "
