@@ -5,7 +5,7 @@ test:
 	pytest
 
 distribution:
-	python setup.py sdist bdist_wheel
+	python -m build
 
 distribution-check:
 	twine check dist/*
