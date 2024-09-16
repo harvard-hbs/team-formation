@@ -177,7 +177,7 @@ class TeamAssignment:
         self.target_team_size = target_team_size
 
         #: Input variable: make non-target-size teams one bigger or smaller
-        self.less_than_target = False
+        self.less_than_target = less_than_target
 
         #: Calculated sizes of the teams
         self.team_sizes = calc_team_sizes(
