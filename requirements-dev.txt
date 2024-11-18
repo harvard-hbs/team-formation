@@ -3,6 +3,7 @@ ortools
 streamlit
 humanize
 pytest
-setuptools
 build
 twine
+hatchling
+

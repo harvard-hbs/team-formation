@@ -1,15 +1,16 @@
-install-dev:
+.PHONY: install test build check-dist upload
+
+install:
 	pip install -r requirements-dev.txt
 
 test:
 	pytest
 
-distribution:
+build:
 	python -m build
 
-distribution-check:
+check-dist:
 	twine check dist/*
 
 upload:
-	twine upload dist/*
-
+	python -m twine upload dist/*

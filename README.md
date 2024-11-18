@@ -124,3 +124,7 @@ keys, a type of `diversify` or `cluster`, and a numeric `weight`.
     8         2          3  working_time    cluster       0
     >>>
 ```
+
+## Change Log
+
+For a detailed log of changes see [CHANGELOG.md](CHANGELOG.md).
