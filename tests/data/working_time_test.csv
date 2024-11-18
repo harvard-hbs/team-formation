@@ -1,0 +1,31 @@
+id,Gender,time_zone,working_time
+82,Female,Europe/Berlin,Evening
+98,Male,Australia/Brisbane,Morning; Afternoon; Evening
+97,Female,Europe/Paris,Morning; Afternoon; Evening
+105,Male,US/Eastern,Morning; Afternoon; Evening
+54,Male,America/Kentucky/Louisville,Afternoon; Evening
+61,Male,US/Eastern,Evening
+69,Male,America/Vancouver,Afternoon
+42,Male,US/Eastern,Evening
+9,Male,Europe/Paris,Evening
+84,Male,Europe/Budapest,Morning; Afternoon; Evening
+85,Female,Europe/Berlin,Afternoon
+65,Male,America/New_York,Evening
+20,Female,US/Eastern,Morning; Afternoon; Evening
+21,Male,America/New_York,Evening
+66,Female,Canada/Central,Evening
+6,Male,America/New_York,Evening
+53,Female,America/Los_Angeles,Evening
+12,Male,Canada/Mountain,Evening
+73,Male,America/New_York,Evening
+100,Male,Asia/Muscat,Morning; Afternoon; Evening
+71,Male,America/Caracas,Morning; Afternoon; Evening
+17,Male,Europe/Paris,Evening
+38,Male,Pacific/Auckland,Morning; Afternoon; Evening
+30,Male,America/Monterrey,Afternoon; Evening
+80,Female,America/New_York,Morning; Afternoon; Evening
+27,Male,Asia/Hong_Kong,Evening
+18,Male,Australia/Sydney,Morning; Afternoon; Evening
+1,Male,US/Eastern,Afternoon; Evening
+96,Female,America/New_York,Evening
+106,Male,Asia/Baku,Afternoon
