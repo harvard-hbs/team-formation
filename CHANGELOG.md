@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.1.0] - 2024-11-19
+
+### Added
+
+- Ability to convert working time and time zone into a set of hours from the Streamlit UI.
+- Expose the Streamlit UI to be called as the main function.
 
 ## [1.0.3] - 2024-11-18
 
