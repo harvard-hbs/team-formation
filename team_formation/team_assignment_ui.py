@@ -83,13 +83,30 @@ def translate_working_time():
             
 st.title("Team Formation")
 
+st.markdown("""
+This application is designed to divide a group of
+individuals into a set of smaller teams at or close to a particular target
+team size. The assignment is guided by a sert of constraints on the individual's
+attributes that either prefer attribute similarity (clustering) or attribute
+difference (diversification).
+
+The process for creating teams:
+1. Upload the roster of individuals containing your attributes.
+2. Optional: Convert `time_zone` and `working_time` columns into
+   available hours (Working Time Hours).
+3. Upload the constraints.
+4. Set the desired team size and whether to round to over or under target size.
+4. Generate the teams.
+5. Download the roster with associated teams.
+""")
+
 st.subheader("Roster")
 
 if "roster" in st.session_state:
     roster = st.session_state["roster"]
     st.dataframe(roster, hide_index=True)
 else:
-    st.write("*Please upload participant roster*")
+    st.write("*Roster will appear hear after uploading*")
 
 if "solution_found" in st.session_state:
     st.download_button(label="Download roster teams",
@@ -103,7 +120,7 @@ if "constraints" in st.session_state:
     constraints = st.session_state["constraints"]
     st.dataframe(constraints, hide_index=True)
 else:
-    st.write("*Please upload team assignment constraints*")
+    st.write("*Constraints will appear here after upload*")
 
 if (("target_team_size" in st.session_state) and
     ("over_under_size" in st.session_state) and
@@ -118,7 +135,7 @@ st.number_input("Target team size",
                 min_value=2,
                 key="target_team_size")
                 
-st.selectbox("Team sizes over/under",
+st.selectbox("Should team sizes round to over or under the target size",
              options=["Over", "Under"],
              key="over_under_size")
                 
