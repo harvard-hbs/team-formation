@@ -6,6 +6,9 @@ install:
 test:
 	pytest
 
+test-info:
+	pytest --log-cli-level=INFO
+
 build:
 	python -m build
 

@@ -74,13 +74,16 @@
 # dictionary with keys attribute names from the `participants` data frame as
 # keys, a type of `diversify` or `cluster`, and a numeric `weight`.
 
+import logging
 import re
+import sys
 import pandas as pd
 from itertools import chain
 from collections import Counter, defaultdict
 
 from ortools.sat.python import cp_model
 
+logger = logging.getLogger(__name__)
 
 # ## Problem Representation
 #
@@ -145,7 +148,9 @@ class TeamAssignment:
     """String representing diversify constraints"""
     CT_CLUSTER = "cluster"
     """String representing cluster constraints"""
-    CONSTRAINT_TYPES = [CT_DIVERSIFY, CT_CLUSTER]
+    CT_CLUSTER_NUMERIC = "cluster_numeric"
+    """String representing cluster constraints on numeric values"""
+    CONSTRAINT_TYPES = [CT_DIVERSIFY, CT_CLUSTER, CT_CLUSTER_NUMERIC]
     """List of all constraints types."""
 
     def __init__(
@@ -166,12 +171,24 @@ class TeamAssignment:
 
         self.attr_constraints = constraints.set_index("attribute").to_dict("index")
         """Input variable: constraints with name, type, and priority"""
-        
+
+        # Make lists of boolean and numeric attributes based on constraint
+        # type and verify types.
+        self.attr_names = []
+        self.numeric_attr_names = []
         for attr_name in self.attr_constraints:
             ct_type = self.attr_constraints[attr_name]["type"]
-            if ct_type not in self.CONSTRAINT_TYPES:
+            if ct_type == self.CT_CLUSTER_NUMERIC:
+                logger.info(f"Creating {ct_type} numeric constraint on '{attr_name}'.")
+                self.numeric_attr_names.append(attr_name)
+            elif ct_type in self.CONSTRAINT_TYPES:
+                logger.info(f"Creating {ct_type} category constraint on '{attr_name}'.")
+                self.attr_names.append(attr_name)
+            else:
+                logger.error(
+                    f"Unknown constraint type '{ct_type}' on attribute '{attr_name}'"
+                )
                 raise ValueError("Unknown constraint type", ct_type)
-        self.attr_names = list(self.attr_constraints.keys())
 
         #: Input variable: desired target team size
         self.target_team_size = target_team_size
@@ -185,11 +202,12 @@ class TeamAssignment:
         )
         #: Number of teams
         self.num_teams = len(self.team_sizes)
+        logger.info(f"Creating {self.num_teams} teams of size {self.team_sizes}")
 
         # ### Attribute Value Boolean Variable Names
         #
         # Turn the categorical attribute values
-        # into a set of boolean variables names
+        # into a set of boolean variables 
         self.attr_vals = {}
         for attr_name in self.attr_names:
             bool_vars = categories_to_bool_vars(attr_name, self.participants[attr_name])
@@ -199,12 +217,13 @@ class TeamAssignment:
         #
         # Next we create the `parti_vars` array with one entry for each
         # participant. Each particpant's entry in the array contains a map from
-        # attribute name to the list of CP-SAT boolean variables indicating
+        # attribute name to the list of CP-SAT variables.
+        # 1. For each categorical attribute a set of boolean variables indicating
         # whether the participant has that value of the attribute. A constraint
         # of `bool_var == 1` for the presence of the value in the data and
-        # `bool_var == 0` for the other attribute values. (Open question: should
-        # there be a constraint for `sum(bool_vars) == 1` or is it enough to
-        # have the specific `0` and `1` constraints on each variables?)
+        # `bool_var == 0` for the other attribute values.
+        # 2. For each numeric variable there is an integer variable with
+        # the numeric value for that participant.
 
         self.parti_vars = []
         for id, parti in self.participants.iterrows():
@@ -228,6 +247,16 @@ class TeamAssignment:
                     else:
                         self.model.Add(bool_var == 0)
                 attr_vars[attr_name] = bool_vars
+            # We don't need variables for the numeric values, we just
+            # use the literals. We can maybe modify the boolean case
+            # to use a similar approach.
+            # for attr_name in self.numeric_attr_names:
+            #     parti_var = self.model.NewIntVar(
+            #         self.participants[attr_name].min(),
+            #         self.participants[attr_name].max(),
+            #         f"{attr_name}_parti_val_{id}"
+            #     )
+            #     self.model.Add(parti_var == self.participants)
             self.parti_vars.append(attr_vars)
 
         # ### Team Assignment Constraints
@@ -268,7 +297,7 @@ class TeamAssignment:
         #
         # Both the diversity and clustering constraints used for team formation
         # are defined in terms of team-by-team attribute value counts. We use a
-        # `team_vars` map keyed by the attribute name with an array value
+        # `team_value_count` map keyed by the attribute name with an array value
         # indexed by team; for each team there is an array indexed by attribute
         # value containing an integer variable representing the count of
         # that attribute value in the corresponding team.
@@ -276,11 +305,11 @@ class TeamAssignment:
         # [Describe the mechanism for calculating the counts here.]
         #
         # The count of the number of females in team `0` is
-        # `team_vars["gender"][0][0]`.
+        # `team_value_count["gender"][0][0]`.
 
         ## Create the map from attribute names to array of teams
         ## containing attribute value counts.
-        self.team_vars = {
+        self.team_value_count = {
             attr_name: self.create_attr_counts(attr_name)
             for attr_name in self.attr_names
         }
@@ -320,15 +349,6 @@ class TeamAssignment:
         # when turning the percentage into a target value count (rather than
         # truncation) to ensure that the target counts add up to the team size.
 
-        ## Cache attribute value distributions for diversity constraints.
-        self.population_dist = {}
-        for attr_name in self.attr_constraints:
-            constraint = self.attr_constraints[attr_name]
-            if constraint["type"] == self.CT_DIVERSIFY:
-                self.population_dist[attr_name] = self.population_distribution(
-                    attr_name
-                )
-
         # #### Clustering
         #
         # We consider a team to be ideal with respect to an attribute clustering
@@ -361,12 +381,14 @@ class TeamAssignment:
         for attr_name in self.attr_constraints:
             constraint = self.attr_constraints[attr_name]
             if constraint["type"] == self.CT_DIVERSIFY:
-                self.population_dist[attr_name] = self.population_distribution(
-                    attr_name
-                )
+                pop_dist = self.population_distribution(attr_name)
+                logger.info(f"Population distribution for {attr_name}: {dict(pop_dist)}")
+                self.population_dist[attr_name] = pop_dist
                 costs = self.create_diversity_costs(attr_name)
             if constraint["type"] == self.CT_CLUSTER:
                 costs = self.create_clustering_costs(attr_name)
+            if constraint["type"] == self.CT_CLUSTER_NUMERIC:
+                costs = self.create_numeric_clustering_costs(attr_name)
             if constraint["weight"] != 1:
                 costs = [cost * constraint["weight"] for cost in costs]
             self.attr_costs += costs
@@ -406,12 +428,13 @@ class TeamAssignment:
                     team_var = self.parti_vars[id]["team"][team_num]
                     attr_var = self.parti_vars[id][attr_name][attr_val_index]
                     parti_count = self.model.NewBoolVar(
-                        "parti_{id}_team_{team_num}_{attr_val}"
+                        f"parti_{id}_team_{team_num}_{attr_val}"
                     )
                     # Use team_var*attr_var to calculate And(team_var, attr_var)
                     self.model.AddMultiplicationEquality(
                         parti_count, [team_var, attr_var]
                     )
+                    logger.info(f"{parti_count} == {team_var}*{attr_var}")
                     # This is an alternative that doesn't seem to perform as well
                     # self.model.Add(parti_count == attr_var).OnlyEnforceIf(team_var)
                     # self.model.Add(parti_count == 0).OnlyEnforceIf(team_var.Not())
@@ -424,6 +447,8 @@ class TeamAssignment:
     # ### Team Diversity and Clustering Constraints
     #
     def population_distribution(self, attr_name):
+        """Returns the percentage of each attribute value of the
+        specified attribute in a mapping from value to percentage."""
         pop_dist = (
             self.participants[attr_name].value_counts(normalize=True).sort_index()
         )
@@ -445,9 +470,10 @@ class TeamAssignment:
                 cost_var = self.model.NewIntVar(
                     0, team_size, f"{attr_name}_cost_{team_num}_{val}"
                 )
-                self.model.AddAbsEquality(
+                self.model.add_abs_equality(
                     cost_var,
-                    (self.team_vars[attr_name][team_num][val] - targets.iloc[val]),
+                    (self.team_value_count[attr_name][team_num][val] -
+                     targets.iloc[val]),
                 )
                 diversity_costs.append(cost_var)
         return diversity_costs
@@ -458,18 +484,85 @@ class TeamAssignment:
         """Create cost variables for clustering optimization."""
         clustering_costs = []
         for team_num, team_size in enumerate(self.team_sizes):
-            max_count_var = self.model.NewIntVar(
+            max_count_var = self.model.new_int_var(
                 0, team_size, f"{attr_name}_max_count[{team_num}]"
             )
-            cost_var = self.model.NewIntVar(
+            cost_var = self.model.new_int_var(
                 0, team_size, f"{attr_name}_cost[{team_num}]"
             )
-            self.model.AddMaxEquality(
-                max_count_var, self.team_vars[attr_name][team_num]
+            self.model.add_max_equality(
+                max_count_var, self.team_value_count[attr_name][team_num]
             )
-            self.model.Add(cost_var == (team_size - max_count_var))
+            self.model.add(cost_var == (team_size - max_count_var))
             clustering_costs.append(cost_var)
         return clustering_costs
+
+    # #### Numeric Clustering
+    #
+    def create_numeric_clustering_costs(self, attr_name):
+        """Create costs variables for numeric clustering optimization."""
+        parti_vals = self.participants[attr_name]
+        attr_min = parti_vals.min()
+        attr_max = parti_vals.max()
+        attr_min_dev = 0
+        attr_max_dev = attr_max - attr_min
+        numeric_clustering_costs = []
+        for team_num, team_size in enumerate(self.team_sizes):
+            # Create a variable for the team's mean
+            team_mean = self.model.new_int_var(
+                attr_min,
+                attr_max,
+                f"{attr_name}_team_mean_{team_num}"
+            )
+            team_attr_vals = []
+            team_abs_deviations = []
+            for parti_id in range(self.num_participants):
+                parti_team_val = self.model.new_int_var(
+                    min(attr_min, 0),
+                    max(attr_max, 0),
+                    f"parti_{parti_id}_team_{team_num}_{attr_name}",
+                )
+                self.model.add_multiplication_equality(
+                    parti_team_val,
+                    [
+                        self.parti_vars[parti_id]["team"][team_num],
+                        parti_vals[parti_id],
+                    ]
+                )
+                team_attr_vals.append(parti_team_val)
+                parti_dev = self.model.NewIntVar(
+                    attr_min_dev,
+                    attr_max_dev,
+                    f"{attr_name}_parti_{parti_id}_dev",
+                )
+                self.model.add_abs_equality(
+                    parti_dev,
+                    (team_mean - parti_vals[parti_id]),
+                )
+                maybe_parti_dev = self.model.NewIntVar(
+                    min(attr_min_dev, 0),
+                    max(attr_max_dev, 0),
+                    f"{attr_name}_parti_{parti_id}_maybe_dev",
+                )
+                self.model.add_multiplication_equality(
+                    maybe_parti_dev,
+                    [
+                        self.parti_vars[parti_id]["team"][team_num],
+                        parti_dev,
+                        
+                    ],
+                )
+                team_abs_deviations.append(maybe_parti_dev)
+            # Create a variable for the team's mean absolute deviation
+            team_mad = self.model.NewIntVar(
+                0,
+                (attr_max - attr_min),
+                f"{attr_name}_mad_{team_num}"
+            )
+            # Set the MAD equal to the average of absolute deviations
+            self.model.Add(team_mad * team_size == sum(team_abs_deviations))
+            numeric_clustering_costs.append(team_mad)
+        return numeric_clustering_costs
 
     # ## Solving the Model
     #
