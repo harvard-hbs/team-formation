@@ -35,7 +35,6 @@ def small_model():
             ["years_experience", "cluster_numeric", 1],
         ],
     )
-    print(participants)
     ta = TeamAssignment(
         participants,
         constraints,
@@ -49,7 +48,7 @@ def test_small():
     print(ta.participants)
 
     # Check matching number of participants
-    assert(ta.num_participants == len(participants))
+    assert(ta.num_participants == len(ta.participants))
     # No solution should be found yet
     assert(not ta.solution_found)
     

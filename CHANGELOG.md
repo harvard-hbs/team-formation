@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.2.0] - 2024-12-19
+
+- Added new `cluster_numeric` constraint type.
+
 ## [1.1.0] - 2024-11-19
 
 ### Added

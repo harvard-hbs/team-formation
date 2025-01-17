@@ -17,3 +17,6 @@ check-dist:
 
 upload:
 	python -m twine upload dist/*
+
+dist-clean:
+	/bin/rm -rf dist
