@@ -6,20 +6,20 @@ logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 
 from team_formation.team_assignment import TeamAssignment
 
-def small_model():
+def diversify_model():
     participants = pd.DataFrame(
         columns=[
             "id",
             "gender",
         ],
-        data=[[8, "Male"],
-              [9, "Male"],
-              [10, "Female"],
-              [16, "Male"],
-              [18, "Female"],
-              [20, "Female"],
-              [21, "Male"],
-              [29, "Female"],
+        data=[[8, "Female"],
+              [9, "Female"],
+              [10, "Male"],
+              [16, "Female"],
+              [18, "Male"],
+              [20, "Male"],
+              [21, "Female"],
+              [29, "Male"],
               [31, "Female"]],
     )
     target_team_size = 3
@@ -37,8 +37,8 @@ def small_model():
     return ta
     
 
-def test_small():
-    ta = small_model()
+def test_diversify():
+    ta = diversify_model()
     print(ta.participants)
 
     # Check matching number of participants
@@ -46,7 +46,7 @@ def test_small():
     # No solution should be found yet
     assert (not ta.solution_found), "Solution should not be found"
     
-    ta.solve()
+    ta.solve(log_progress=True)
 
     # Solution should be found
     assert ta.solution_found, "No solution found"

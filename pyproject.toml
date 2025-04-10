@@ -19,7 +19,7 @@ classifiers = [
 keywords = ["team", "team formation", "clustering", "diversity"]
 dependencies = [
     "pandas>=2.0",
-    "ortools>=9.2",
+    "ortools>=9.2,<=9.11",
     "streamlit>=1.30",
     "humanize>=4.9",
 ]

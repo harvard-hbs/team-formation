@@ -1,0 +1,3187 @@
+{
+    "constraints": [
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            0
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            18
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        46
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            0
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            19
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        66
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            0
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            20
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        86
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            10
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            33
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        51
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            10
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            34
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        71
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            10
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            35
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        91
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            11
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            33
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        61
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            11
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            34
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        81
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            11
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            35
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        101
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            12
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            36
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        52
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            12
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            37
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        72
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            12
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            38
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        92
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            13
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            36
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        62
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            13
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            37
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        82
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            13
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            38
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        102
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            14
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            39
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        53
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            14
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            40
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        73
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            14
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            41
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        93
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            15
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            39
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        63
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            15
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            40
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        83
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            15
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            41
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        103
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            16
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            42
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        54
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            16
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            43
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        74
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            16
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            44
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        94
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            17
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            42
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        64
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            17
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            43
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        84
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            17
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            44
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        104
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            18
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            1
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        56
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            19
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            1
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        76
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            1
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            20
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        96
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            21
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            2
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        47
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            21
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            3
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        57
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            22
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            2
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        67
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            22
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            3
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        77
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            23
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            2
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        87
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            23
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            3
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        97
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            24
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            4
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        48
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            24
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            5
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        58
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            25
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            4
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        68
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            25
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            5
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        78
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            26
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            4
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        88
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            26
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            5
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        98
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            27
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            6
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        49
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            27
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            7
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        59
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            28
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            6
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        69
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            28
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            7
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        79
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            29
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            6
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        89
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            29
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            7
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        99
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            30
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            8
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        50
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            30
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            9
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        60
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            31
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            8
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        70
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            31
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            9
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        80
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            32
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            8
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        90
+                    ]
+                }
+            }
+        },
+        {
+            "int_prod": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            32
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "vars": [
+                            9
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        100
+                    ]
+                }
+            }
+        },
+        {
+            "lin_max": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "-1"
+                        ],
+                        "offset": "-2",
+                        "vars": [
+                            45
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "offset": "-2",
+                        "vars": [
+                            45
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        105
+                    ]
+                }
+            }
+        },
+        {
+            "lin_max": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "-1"
+                        ],
+                        "offset": "-2",
+                        "vars": [
+                            65
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "offset": "-2",
+                        "vars": [
+                            65
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        106
+                    ]
+                }
+            }
+        },
+        {
+            "lin_max": {
+                "exprs": [
+                    {
+                        "coeffs": [
+                            "-1"
+                        ],
+                        "offset": "-2",
+                        "vars": [
+                            85
+                        ]
+                    },
+                    {
+                        "coeffs": [
+                            "1"
+                        ],
+                        "offset": "-2",
+                        "vars": [
+                            85
+                        ]
+                    }
+                ],
+                "target": {
+                    "coeffs": [
+                        "1"
+                    ],
+                    "vars": [
+                        107
+                    ]
+                }
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "1"
+                ],
+                "domain": [
+                    "0",
+                    "0"
+                ],
+                "vars": [
+                    100,
+                    101,
+                    102,
+                    103,
+                    104,
+                    95,
+                    96,
+                    97,
+                    98,
+                    99
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "1"
+                ],
+                "domain": [
+                    "0",
+                    "0"
+                ],
+                "vars": [
+                    45,
+                    46,
+                    47,
+                    48,
+                    49,
+                    50,
+                    51,
+                    52,
+                    53,
+                    54
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "1"
+                ],
+                "domain": [
+                    "0",
+                    "0"
+                ],
+                "vars": [
+                    55,
+                    56,
+                    57,
+                    58,
+                    59,
+                    60,
+                    61,
+                    62,
+                    63,
+                    64
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "1"
+                ],
+                "domain": [
+                    "0",
+                    "0"
+                ],
+                "vars": [
+                    65,
+                    66,
+                    67,
+                    68,
+                    69,
+                    70,
+                    71,
+                    72,
+                    73,
+                    74
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "1"
+                ],
+                "domain": [
+                    "0",
+                    "0"
+                ],
+                "vars": [
+                    75,
+                    76,
+                    77,
+                    78,
+                    79,
+                    80,
+                    81,
+                    82,
+                    83,
+                    84
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "-1",
+                    "1"
+                ],
+                "domain": [
+                    "0",
+                    "0"
+                ],
+                "vars": [
+                    85,
+                    86,
+                    87,
+                    88,
+                    89,
+                    90,
+                    91,
+                    92,
+                    93,
+                    94
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1"
+                ],
+                "domain": [
+                    "3",
+                    "3"
+                ],
+                "vars": [
+                    18,
+                    21,
+                    24,
+                    27,
+                    30,
+                    33,
+                    36,
+                    39,
+                    42
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1"
+                ],
+                "domain": [
+                    "3",
+                    "3"
+                ],
+                "vars": [
+                    19,
+                    22,
+                    25,
+                    28,
+                    31,
+                    34,
+                    37,
+                    40,
+                    43
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1"
+                ],
+                "domain": [
+                    "3",
+                    "3"
+                ],
+                "vars": [
+                    20,
+                    23,
+                    26,
+                    29,
+                    32,
+                    35,
+                    38,
+                    41,
+                    44
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1",
+                    "1",
+                    "1"
+                ],
+                "domain": [
+                    "1",
+                    "1"
+                ],
+                "vars": [
+                    18,
+                    19,
+                    20
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1",
+                    "1",
+                    "1"
+                ],
+                "domain": [
+                    "1",
+                    "1"
+                ],
+                "vars": [
+                    21,
+                    22,
+                    23
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1",
+                    "1",
+                    "1"
+                ],
+                "domain": [
+                    "1",
+                    "1"
+                ],
+                "vars": [
+                    24,
+                    25,
+                    26
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1",
+                    "1",
+                    "1"
+                ],
+                "domain": [
+                    "1",
+                    "1"
+                ],
+                "vars": [
+                    27,
+                    28,
+                    29
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1",
+                    "1",
+                    "1"
+                ],
+                "domain": [
+                    "1",
+                    "1"
+                ],
+                "vars": [
+                    30,
+                    31,
+                    32
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1",
+                    "1",
+                    "1"
+                ],
+                "domain": [
+                    "1",
+                    "1"
+                ],
+                "vars": [
+                    33,
+                    34,
+                    35
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1",
+                    "1",
+                    "1"
+                ],
+                "domain": [
+                    "1",
+                    "1"
+                ],
+                "vars": [
+                    36,
+                    37,
+                    38
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1",
+                    "1",
+                    "1"
+                ],
+                "domain": [
+                    "1",
+                    "1"
+                ],
+                "vars": [
+                    39,
+                    40,
+                    41
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1",
+                    "1",
+                    "1"
+                ],
+                "domain": [
+                    "1",
+                    "1"
+                ],
+                "vars": [
+                    42,
+                    43,
+                    44
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1"
+                ],
+                "domain": [
+                    "0",
+                    "0"
+                ],
+                "vars": [
+                    10
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1"
+                ],
+                "domain": [
+                    "0",
+                    "0"
+                ],
+                "vars": [
+                    13
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1"
+                ],
+                "domain": [
+                    "0",
+                    "0"
+                ],
+                "vars": [
+                    14
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1"
+                ],
+                "domain": [
+                    "0",
+                    "0"
+                ],
+                "vars": [
+                    17
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1"
+                ],
+                "domain": [
+                    "0",
+                    "0"
+                ],
+                "vars": [
+                    1
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1"
+                ],
+                "domain": [
+                    "0",
+                    "0"
+                ],
+                "vars": [
+                    3
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1"
+                ],
+                "domain": [
+                    "0",
+                    "0"
+                ],
+                "vars": [
+                    4
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1"
+                ],
+                "domain": [
+                    "0",
+                    "0"
+                ],
+                "vars": [
+                    7
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1"
+                ],
+                "domain": [
+                    "0",
+                    "0"
+                ],
+                "vars": [
+                    8
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1"
+                ],
+                "domain": [
+                    "1",
+                    "1"
+                ],
+                "vars": [
+                    0
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1"
+                ],
+                "domain": [
+                    "1",
+                    "1"
+                ],
+                "vars": [
+                    11
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1"
+                ],
+                "domain": [
+                    "1",
+                    "1"
+                ],
+                "vars": [
+                    12
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1"
+                ],
+                "domain": [
+                    "1",
+                    "1"
+                ],
+                "vars": [
+                    15
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1"
+                ],
+                "domain": [
+                    "1",
+                    "1"
+                ],
+                "vars": [
+                    16
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1"
+                ],
+                "domain": [
+                    "1",
+                    "1"
+                ],
+                "vars": [
+                    2
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1"
+                ],
+                "domain": [
+                    "1",
+                    "1"
+                ],
+                "vars": [
+                    5
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1"
+                ],
+                "domain": [
+                    "1",
+                    "1"
+                ],
+                "vars": [
+                    6
+                ]
+            }
+        },
+        {
+            "linear": {
+                "coeffs": [
+                    "1"
+                ],
+                "domain": [
+                    "1",
+                    "1"
+                ],
+                "vars": [
+                    9
+                ]
+            }
+        }
+    ],
+    "objective": {
+        "coeffs": [
+            "1",
+            "1",
+            "1"
+        ],
+        "scaling_factor": 1.0,
+        "vars": [
+            105,
+            106,
+            107
+        ]
+    },
+    "variables": [
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_0_in_team_0"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_0_in_team_1"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_0_in_team_2"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_0_team_0_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_0_team_0_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_0_team_1_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_0_team_1_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_0_team_2_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_0_team_2_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_1_in_team_0"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_1_in_team_1"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_1_in_team_2"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_1_team_0_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_1_team_0_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_1_team_1_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_1_team_1_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_1_team_2_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_1_team_2_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_2_in_team_0"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_2_in_team_1"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_2_in_team_2"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_2_team_0_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_2_team_0_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_2_team_1_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_2_team_1_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_2_team_2_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_2_team_2_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_3_in_team_0"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_3_in_team_1"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_3_in_team_2"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_3_team_0_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_3_team_0_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_3_team_1_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_3_team_1_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_3_team_2_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_3_team_2_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_4_in_team_0"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_4_in_team_1"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_4_in_team_2"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_4_team_0_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_4_team_0_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_4_team_1_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_4_team_1_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_4_team_2_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_4_team_2_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_5_in_team_0"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_5_in_team_1"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_5_in_team_2"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_5_team_0_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_5_team_0_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_5_team_1_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_5_team_1_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_5_team_2_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_5_team_2_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_6_in_team_0"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_6_in_team_1"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_6_in_team_2"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_6_team_0_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_6_team_0_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_6_team_1_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_6_team_1_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_6_team_2_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_6_team_2_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_7_in_team_0"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_7_in_team_1"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_7_in_team_2"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_7_team_0_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_7_team_0_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_7_team_1_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_7_team_1_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_7_team_2_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_7_team_2_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_8_in_team_0"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_8_in_team_1"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_8_in_team_2"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_8_team_0_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_8_team_0_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_8_team_1_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_8_team_1_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_8_team_2_gender_is_female"
+        },
+        {
+            "domain": [
+                "0",
+                "1"
+            ],
+            "name": "parti_8_team_2_gender_is_male"
+        },
+        {
+            "domain": [
+                "0",
+                "3"
+            ],
+            "name": "gender_cost_0_0"
+        },
+        {
+            "domain": [
+                "0",
+                "3"
+            ],
+            "name": "gender_cost_1_0"
+        },
+        {
+            "domain": [
+                "0",
+                "3"
+            ],
+            "name": "gender_cost_2_0"
+        },
+        {
+            "domain": [
+                "0",
+                "3"
+            ],
+            "name": "team_0_gender_is_female_count"
+        },
+        {
+            "domain": [
+                "0",
+                "3"
+            ],
+            "name": "team_0_gender_is_male_count"
+        },
+        {
+            "domain": [
+                "0",
+                "3"
+            ],
+            "name": "team_1_gender_is_female_count"
+        },
+        {
+            "domain": [
+                "0",
+                "3"
+            ],
+            "name": "team_1_gender_is_male_count"
+        },
+        {
+            "domain": [
+                "0",
+                "3"
+            ],
+            "name": "team_2_gender_is_female_count"
+        },
+        {
+            "domain": [
+                "0",
+                "3"
+            ],
+            "name": "team_2_gender_is_male_count"
+        }
+    ]
+}
