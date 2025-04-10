@@ -1,5 +1,5 @@
 pandas
-ortools<=9.11.4210
+ortools
 streamlit
 humanize
 pytest

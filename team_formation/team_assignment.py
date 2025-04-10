@@ -470,11 +470,18 @@ class TeamAssignment:
                 cost_var = self.model.NewIntVar(
                     0, team_size, f"{attr_name}_cost_{team_num}_{val}"
                 )
-                self.model.add_abs_equality(
-                    cost_var,
+                # Broken in ortools-9.12.4544:
+                # self.model.add_abs_equality(
+                #     cost_var,
+                #     (self.team_value_count[attr_name][team_num][val] -
+                #      targets.iloc[val]),
+                # )
+                # Work-around for bug:
+                diff_expr = (
                     (self.team_value_count[attr_name][team_num][val] -
-                     targets.iloc[val]),
+                     targets.iloc[val])
                 )
+                self.model.add_max_equality(cost_var, [diff_expr, -diff_expr])
                 diversity_costs.append(cost_var)
         return diversity_costs
 
@@ -535,9 +542,15 @@ class TeamAssignment:
                     attr_max_dev,
                     f"{attr_name}_parti_{parti_id}_dev",
                 )
-                self.model.add_abs_equality(
+                # Broken 9.12.4544
+                # self.model.add_abs_equality(
+                #     parti_dev,
+                #     (team_mean - parti_vals[parti_id]),
+                # )
+                diff_expr = (team_mean - parti_vals[parti_id])
+                self.model.add_max_equality(
                     parti_dev,
-                    (team_mean - parti_vals[parti_id]),
+                    [diff_expr, -diff_expr],
                 )
                 maybe_parti_dev = self.model.NewIntVar(
                     min(attr_min_dev, 0),

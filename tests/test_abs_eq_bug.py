@@ -9,7 +9,10 @@ def test_abs_eq_bug():
     cost_var_0 = model.new_int_var(0, 3, "team_0_cost")
     # The actual team count
     team_count_0 = model.new_int_var(0, 3, "team_0_count")
-    cost_constraint = model.add_abs_equality(cost_var_0, (team_count_0 - 2))
+    diff_expr = team_count_0 - 2
+    # Change this back when bug is fixed
+    # cost_constraint = model.add_abs_equality(cost_var_0, diff_expr)
+    cost_constraint = model.add_max_equality(cost_var_0, [diff_expr, -diff_expr])
     print("Cost constraint:")
     print(cost_constraint.proto)
     # Set actual team count to 0
