@@ -391,7 +391,7 @@ class TeamAssignment:
                 costs = self.create_numeric_clustering_costs(attr_name)
             if constraint["weight"] != 1:
                 costs = [cost * constraint["weight"] for cost in costs]
-            self.attr_costs += costs
+            self.attr_costs.extend(costs)
 
         ## Minimize the sum of the cost variables
         #
