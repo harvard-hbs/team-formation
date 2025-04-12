@@ -150,7 +150,11 @@ class TeamAssignment:
     """String representing cluster constraints"""
     CT_CLUSTER_NUMERIC = "cluster_numeric"
     """String representing cluster constraints on numeric values"""
-    CONSTRAINT_TYPES = [CT_DIVERSIFY, CT_CLUSTER, CT_CLUSTER_NUMERIC]
+    CT_DIFFERENT = "different"
+    """String representing different constraints"""
+    CONSTRAINT_TYPES = [
+        CT_DIVERSIFY, CT_CLUSTER, CT_CLUSTER_NUMERIC, CT_DIFFERENT
+    ]
     """List of all constraints types."""
 
     def __init__(
@@ -389,6 +393,8 @@ class TeamAssignment:
                 costs = self.create_clustering_costs(attr_name)
             if constraint["type"] == self.CT_CLUSTER_NUMERIC:
                 costs = self.create_numeric_clustering_costs(attr_name)
+            if constraint["type"] == self.CT_DIFFERENT:
+                costs = self.create_difference_costs(attr_name)
             if constraint["weight"] != 1:
                 costs = [cost * constraint["weight"] for cost in costs]
             self.attr_costs.extend(costs)
@@ -577,6 +583,22 @@ class TeamAssignment:
             numeric_clustering_costs.append(team_mad)
         return numeric_clustering_costs
 
+    def create_difference_costs(self, attr_name):
+        """Create cost variables for attribute difference optimization."""
+        diff_costs = []
+        for team_num, team_size in enumerate(self.team_sizes):
+            for value_count_var in self.team_value_count[attr_name][team_num]:
+                val_name = value_count_var.name
+                count_over_1 = self.model.new_int_var(
+                    0, team_size, f"{attr_name}_{val_name}_count_over[{team_num}]"
+                )
+                self.model.add_max_equality(
+                    count_over_1,
+                    [(value_count_var - 1), 0],
+                )
+                diff_costs.append(count_over_1)
+        return diff_costs
+    
     # ## Solving the Model
     #
     # The `solve` method creates a `CpSolver` object and calls its `solve`
