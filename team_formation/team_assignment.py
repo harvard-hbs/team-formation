@@ -228,13 +228,15 @@ class TeamAssignment:
         # `bool_var == 0` for the other attribute values.
         # 2. For each numeric variable there is an integer variable with
         # the numeric value for that participant.
-
+        #
         self.parti_vars = []
         for id, parti in self.participants.iterrows():
             attr_vars = defaultdict(list)
             for attr_name in self.attr_vals:
                 bool_vars = []
                 parti_vals = parti[attr_name]
+                # If a participant can have multiple values of an attribute,
+                # they are represented as a list.
                 if isinstance(parti_vals, list):
                     verb = "has"
                 else:
@@ -244,12 +246,12 @@ class TeamAssignment:
                     make_attr_value_name(attr_name, pv, verb) for pv in parti_vals
                 ]
                 for bool_var_cat in self.attr_vals[attr_name]:
-                    bool_var = self.model.NewBoolVar(bool_var_cat)
+                    bool_var = self.model.new_bool_var(bool_var_cat)
                     bool_vars.append(bool_var)
                     if bool_var_cat in attr_vals:
-                        self.model.Add(bool_var == 1)
+                        self.model.add(bool_var == 1)
                     else:
-                        self.model.Add(bool_var == 0)
+                        self.model.add(bool_var == 0)
                 attr_vars[attr_name] = bool_vars
             # We don't need variables for the numeric values, we just
             # use the literals. We can maybe modify the boolean case
@@ -392,7 +394,7 @@ class TeamAssignment:
             if constraint["type"] == self.CT_CLUSTER:
                 costs = self.create_clustering_costs(attr_name)
             if constraint["type"] == self.CT_CLUSTER_NUMERIC:
-                costs = self.create_numeric_clustering_costs(attr_name)
+                costs = self.create_numeric_clustering_costs_range(attr_name)
             if constraint["type"] == self.CT_DIFFERENT:
                 costs = self.create_difference_costs(attr_name)
             if constraint["weight"] != 1:
@@ -433,11 +435,13 @@ class TeamAssignment:
                 for id in range(self.num_participants):
                     team_var = self.parti_vars[id]["team"][team_num]
                     attr_var = self.parti_vars[id][attr_name][attr_val_index]
-                    parti_count = self.model.NewBoolVar(
-                        f"parti_{id}_team_{team_num}_{attr_val}"
+                    parti_count = self.model.new_int_var(
+                        0,
+                        team_size,
+                        f"parti_{id}_team_{team_num}_{attr_val}_count"
                     )
                     # Use team_var*attr_var to calculate And(team_var, attr_var)
-                    self.model.AddMultiplicationEquality(
+                    self.model.add_multiplication_equality(
                         parti_count, [team_var, attr_var]
                     )
                     logger.info(f"{parti_count} == {team_var}*{attr_var}")
@@ -512,7 +516,43 @@ class TeamAssignment:
 
     # #### Numeric Clustering
     #
-    def create_numeric_clustering_costs(self, attr_name):
+    def create_numeric_clustering_costs_range(self, attr_name):
+        """Create costs variables for numeric clustering optimization."""
+        parti_vals = self.participants[attr_name]
+        attr_min = parti_vals.min()
+        attr_max = parti_vals.max()
+        numeric_clustering_costs = []
+        for team_num, team_size in enumerate(self.team_sizes):
+            # Create a variable for the team's min, max, range
+            team_min = self.model.new_int_var(
+                attr_min,
+                attr_max,
+                f"{attr_name}_team_min_{team_num}"
+            )
+            team_max = self.model.new_int_var(
+                attr_min,
+                attr_max,
+                f"{attr_name}_team_max_{team_num}"
+            )
+            team_range = self.model.new_int_var(
+                attr_min,
+                attr_max,
+                f"{attr_name}_team_range_{team_num}"
+            )
+            for parti_id in range(self.num_participants):
+                self.model.add(
+                    team_min <= parti_vals[parti_id]
+                ).only_enforce_if(self.parti_vars[parti_id]["team"][team_num])
+                self.model.add(
+                    team_max >= parti_vals[parti_id]
+                ).only_enforce_if(self.parti_vars[parti_id]["team"][team_num])
+            self.model.add(team_range == (team_max - team_min))
+            numeric_clustering_costs.append(team_range)
+        return numeric_clustering_costs
+
+    # #### Numeric Clustering
+    #
+    def create_numeric_clustering_costs_mad(self, attr_name):
         """Create costs variables for numeric clustering optimization."""
         parti_vals = self.participants[attr_name]
         attr_min = parti_vals.min()
@@ -579,7 +619,7 @@ class TeamAssignment:
                 f"{attr_name}_mad_{team_num}"
             )
             # Set the MAD equal to the average of absolute deviations
-            self.model.Add(team_mad * team_size == sum(team_abs_deviations))
+            self.model.add(team_mad * team_size == sum(team_abs_deviations))
             numeric_clustering_costs.append(team_mad)
         return numeric_clustering_costs
 

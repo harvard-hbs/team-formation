@@ -30,11 +30,19 @@ class SolutionCallback(cp_model.CpSolverSolutionCallback):
             self.StopSearch()
 
 def roster_model():
-    partis = pd.read_csv(TEST_ROSTER)
+    partis = (
+        pd.read_csv(TEST_ROSTER)
+        .assign(working_hour_list = lambda x: x["working_hour_list"].str.split(";"))
+    )
     constraints = pd.DataFrame({
-        "attribute": ["gender", "term_2_team_num", "term_1_team_num"],
-        "type": ["diversify", "different", "different"],
-        "weight": [3, 2, 1],
+        "attribute": [
+            "gender",
+            "working_hour_list",
+            "term_2_team_num",
+            "term_1_team_num",
+        ],
+        "type": ["diversify", "cluster", "different", "different"],
+        "weight": [3, 4, 2, 1],
     })
     target_team_size = 7
     ta = TeamAssignment(

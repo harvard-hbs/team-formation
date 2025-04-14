@@ -1,5 +1,19 @@
 # Change Log
 
+## [1.3.0] - 2025-04-12
+
+### Modified
+
+- Changed use of `add_abs_equality(target, expr)` constraints to
+  `add_max_equality(target, [expr, -expr])` to get work around bug.
+
+### Added
+	
+- Added new `different` constraint type.
+- Added [`tests/test_abs_eq_bug.py`](tests/test_abs_eq_bug.py) to exhibit or-tools
+  9.12.4544 bug with `add_abs_equality` constraint.
+- Added a new version of numeric clustering based on min/max range.
+	
 ## [1.2.0] - 2024-12-19
 
 - Added new `cluster_numeric` constraint type.

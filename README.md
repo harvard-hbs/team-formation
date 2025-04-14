@@ -128,3 +128,10 @@ keys, a type of `diversify` or `cluster`, and a numeric `weight`.
 ## Change Log
 
 For a detailed log of changes see [CHANGELOG.md](CHANGELOG.md).
+
+## TODO
+
+-[ ] Work on simplified SolutionCallback and consider adding to library.
+-[ ] Go through `create_numeric_clustering_costs` to look for simplifications.
+-[ ] Keep track of costs by team and attribute for better introspection.
+-[ ] Consider implementing framework for adding new constraint types.
