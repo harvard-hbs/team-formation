@@ -535,8 +535,8 @@ class TeamAssignment:
                 f"{attr_name}_team_max_{team_num}"
             )
             team_range = self.model.new_int_var(
-                attr_min,
-                attr_max,
+                0,
+                (attr_max - attr_min),
                 f"{attr_name}_team_range_{team_num}"
             )
             for parti_id in range(self.num_participants):
@@ -648,7 +648,9 @@ class TeamAssignment:
 
     def solve(self, solution_callback=None, log_progress=False):
         self.solver = cp_model.CpSolver()
-        self.solver.parameters.log_search_progress = log_progress
+        if log_progress:
+            self.solver.parameters.log_search_progress = True
+            self.solver.parameters.log_to_stdout = True
         # This alternative is for establishing a callback for interrupting before
         # an optimal solution is found.
         self.status = self.solver.Solve(self.model, solution_callback=solution_callback)

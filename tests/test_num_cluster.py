@@ -37,7 +37,7 @@ def small_model():
     return ta
     
 
-def test_small():
+def test_num_cluster():
     ta = small_model()
     print(ta.participants)
 
@@ -53,40 +53,3 @@ def test_small():
     # Resulting teams should all be of size 3
     assert(all(ta.participants["team_num"].value_counts() == 3))
     
-    print(ta.participants.sort_values("team_num"))
-    team_eval = ta.evaluate_teams()
-
-    # There should be only one miss
-    assert(sum(team_eval["missed"] > 0) == 1)
-    print(team_eval)
-
-def test_micro():
-    ta = micro_model()
-    ta.solve()
-    assert(ta.solution_found)
-
-def micro_model():
-    participants = pd.DataFrame(
-        columns=["id", "gender", "age"],
-        data=[
-            [8, "Male", 43],
-            [9, "Female", 58],
-            [10, "Male", 56],
-            [16, "Female", 47],
-        ],
-    )
-    target_team_size = 2
-    constraints = pd.DataFrame(
-        columns=["attribute", "type", "weight"],
-        data=[
-            ["gender", "diversify", 1],
-            ["age", "cluster_numeric", 1],
-        ]
-    )
-    print(participants)
-    ta = TeamAssignment(
-        participants,
-        constraints,
-        target_team_size,
-    )
-    return ta

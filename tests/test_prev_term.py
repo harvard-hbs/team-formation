@@ -1,5 +1,4 @@
 import datetime
-import humanize
 import logging
 import os
 import pandas as pd
@@ -14,19 +13,18 @@ TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 TEST_ROSTER = os.path.join(TEST_DIR, "data", "roster_prev_term_test.csv")
 
 class SolutionCallback(cp_model.CpSolverSolutionCallback):
-    def __init__(self):
+    def __init__(self, stop_after_seconds=None):
         cp_model.CpSolverSolutionCallback.__init__(self)
-        self.start_time = datetime.datetime.now()
+        self.stop_after_seconds = stop_after_seconds
+        
     def on_solution_callback(self):
         objective_value = self.ObjectiveValue()
         num_conflicts = self.NumConflicts()
         cur_time = datetime.datetime.now()
-        time_diff = cur_time - self.start_time
-        time_diff_human = humanize.naturaldelta(time_diff)
         print(
-            f"Elapsed time: {time_diff_human}, Number of conflicts: {num_conflicts}, Objective value: {objective_value}"
+            f"Wall time: {self.wall_time}, Number of conflicts: {num_conflicts}, Objective value: {objective_value}"
         )
-        if time_diff.seconds > 20:
+        if self.stop_after_seconds and (self.wall_time > self.stop_after_seconds):
             self.StopSearch()
 
 def roster_model():
@@ -64,10 +62,11 @@ def team_costs(ta):
 
 def test_prev_term():
     ta = roster_model()
-    ta.solve(solution_callback=SolutionCallback())
+    ta.solve(solution_callback=SolutionCallback(stop_after_seconds=5))
     print(ta.participants.sort_values("team_num").to_string())
 
 def main():
     test_prev_term()
+    
 if __name__ == "__main__":
     main()

@@ -68,7 +68,7 @@ def test_small():
 
 def test_micro():
     ta = micro_model()
-    ta.solve()
+    ta.solve(log_progress=True)
     assert(ta.solution_found)
 
 def micro_model():
@@ -96,3 +96,9 @@ def micro_model():
         target_team_size,
     )
     return ta
+
+def main():
+    test_small()
+
+if __name__ == "__main__":
+    main()
