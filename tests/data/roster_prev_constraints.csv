@@ -1,0 +1,5 @@
+attribute,type,weight
+working_hour_list,cluster,22
+gender,diversify,4
+term_1_team_num,different,5
+work_experience_years,cluster_numeric,0.25

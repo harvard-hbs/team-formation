@@ -8,21 +8,15 @@ from team_formation.working_time import working_times_hours
 from ortools.sat.python import cp_model
 
 class SolutionCallback(cp_model.CpSolverSolutionCallback):
-    def __init__(self):
+    def __init__(self, stop_after_seconds=None):
         cp_model.CpSolverSolutionCallback.__init__(self)
-        self.start_time = datetime.datetime.now()
+        self.stop_after_seconds = stop_after_seconds
 
     def on_solution_callback(self):
-        objective_value = self.ObjectiveValue()
-        num_conflicts = self.NumConflicts()
-        cur_time = datetime.datetime.now()
-        time_diff = cur_time - self.start_time
-        time_diff_human = humanize.naturaldelta(time_diff)
-        print(
-            f"Elapsed time: {time_diff}, Number of conflicts: " +
-            f"{num_conflicts}, Objective value: {objective_value}"
-        )
-        if time_diff.seconds > 10:
+        print(f"{self.wall_time=}, {self.objective_value=}, {self.num_conflicts=}")
+        if (self.stop_after_seconds and
+            (self.wall_time > self.stop_after_seconds)):
+            print(f"Stopping search after {self.wall_time} seconds")
             self.StopSearch()
 
 def roster_upload_callback():
@@ -53,8 +47,10 @@ def constraints_upload_callback():
         constraints = pd.read_json(constraints_upload)
     st.session_state["constraints"] = constraints
 
-def solve_assignment():
-    st.session_state["team_assignment"].solve(SolutionCallback())
+def update_constraints_callback():
+    """Update the constraints in the session state when edited in the UI"""
+    if "edited_constraints" in st.session_state:
+        st.session_state["constraints"] = st.session_state["edited_constraints"]
 
 def generate_teams_callback():
     team_assignment = TeamAssignment(
@@ -62,7 +58,8 @@ def generate_teams_callback():
         st.session_state["constraints"],
         st.session_state["target_team_size"])
     st.session_state["team_assignment"] = team_assignment
-    callback = SolutionCallback()
+    stop_after_seconds = st.session_state["stop_after_seconds"]
+    callback = SolutionCallback(stop_after_seconds=stop_after_seconds)
     with st.spinner("Generating teams..."):
         team_assignment.solve(solution_callback=callback)
         if team_assignment.solution_found:
@@ -94,8 +91,8 @@ The process for creating teams:
 1. Upload the roster of individuals containing your attributes.
 2. Optional: Convert `time_zone` and `working_time` columns into
    available hours (Working Time Hours).
-3. Upload the constraints.
-4. Set the desired team size and whether to round to over or under target size.
+3. Upload and edit the constraints.
+4. Set the desired team size, whether to round to over or under target size, and maximum search time.
 4. Generate the teams.
 5. Download the roster with associated teams.
 """)
@@ -117,8 +114,32 @@ if "solution_found" in st.session_state:
 st.subheader("Constraints")
     
 if "constraints" in st.session_state:
-    constraints = st.session_state["constraints"]
-    st.dataframe(constraints, hide_index=True)
+    # Create an editable data frame and store the edited version back
+    edited_constraints = st.data_editor(
+        st.session_state["constraints"],
+        hide_index=True,
+        num_rows="dynamic",
+        column_config={
+            "attribute": st.column_config.TextColumn(
+                "Attribute",
+                required=True,
+            ),
+            "constraint_type": st.column_config.SelectboxColumn(
+                "Constraint Type",
+                required=True,
+                options=TeamAssignment.CONSTRAINT_TYPES,
+            ),
+            "weight": st.column_config.NumberColumn(
+                "Weight",
+                required=True,
+                min_value=0,
+                max_value=100,
+            )
+        },
+        key="constraints_editor"
+    )
+    # Update the constraints in session state with the edited version
+    st.session_state["constraints"] = edited_constraints
 else:
     st.write("*Constraints will appear here after upload*")
 
@@ -138,7 +159,12 @@ st.number_input("Target team size",
 st.selectbox("Should team sizes round to over or under the target size",
              options=["Over", "Under"],
              key="over_under_size")
-                
+
+st.number_input("Maximum search time in seconds",
+                value=60,
+                min_value=1,
+                key="stop_after_seconds")
+
 st.file_uploader("Participant roster",
                  type=["csv", "json"],
                  key="roster_upload",
