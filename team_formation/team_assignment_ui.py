@@ -3,21 +3,9 @@ import pandas as pd
 import datetime
 import humanize
 
-from team_assignment import TeamAssignment
+from team_assignment import TeamAssignment, SolutionCallback
 from team_formation.working_time import working_times_hours
 from ortools.sat.python import cp_model
-
-class SolutionCallback(cp_model.CpSolverSolutionCallback):
-    def __init__(self, stop_after_seconds=None):
-        cp_model.CpSolverSolutionCallback.__init__(self)
-        self.stop_after_seconds = stop_after_seconds
-
-    def on_solution_callback(self):
-        print(f"{self.wall_time=}, {self.objective_value=}, {self.num_conflicts=}")
-        if (self.stop_after_seconds and
-            (self.wall_time > self.stop_after_seconds)):
-            print(f"Stopping search after {self.wall_time} seconds")
-            self.StopSearch()
 
 def roster_upload_callback():
     roster_upload = st.session_state["roster_upload"]
@@ -53,10 +41,13 @@ def update_constraints_callback():
         st.session_state["constraints"] = st.session_state["edited_constraints"]
 
 def generate_teams_callback():
+    less_than_target = (st.session_state["over_under_size"] == "Under")
     team_assignment = TeamAssignment(
         st.session_state["roster"],
         st.session_state["constraints"],
-        st.session_state["target_team_size"])
+        st.session_state["target_team_size"],
+        less_than_target=less_than_target,
+    )
     st.session_state["team_assignment"] = team_assignment
     stop_after_seconds = st.session_state["stop_after_seconds"]
     callback = SolutionCallback(stop_after_seconds=stop_after_seconds)
@@ -70,6 +61,7 @@ def generate_teams_callback():
             st.session_state["roster"] = roster_teams
             roster_csv = roster_teams.to_csv(index=False).encode("utf-8")
             st.session_state["roster_csv"] = roster_csv
+            st.session_state["team_eval"] = team_assignment.evaluate_teams()
 
 def translate_working_time():
     roster = st.session_state["roster"]
@@ -111,6 +103,13 @@ if "solution_found" in st.session_state:
                        file_name="roster_team_assignments.csv",
                        mime="text/csv")
 
+if "team_eval" in st.session_state:
+    st.subheader("Team Metrics")
+    st.dataframe(
+        st.session_state["team_eval"],
+        hide_index=True,
+    )
+    
 st.subheader("Constraints")
     
 if "constraints" in st.session_state:

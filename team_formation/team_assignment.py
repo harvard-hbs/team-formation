@@ -449,7 +449,7 @@ class TeamAssignment:
                     # self.model.Add(parti_count == attr_var).OnlyEnforceIf(team_var)
                     # self.model.Add(parti_count == 0).OnlyEnforceIf(team_var.Not())
                     parti_counts.append(parti_count)
-                self.model.Add(team_attr_count == cp_model.LinearExpr.Sum(parti_counts))
+                self.model.add(team_attr_count == cp_model.LinearExpr.Sum(parti_counts))
                 team_counts.append(team_attr_count)
             team_attr_counts.append(team_counts)
         return team_attr_counts
@@ -510,6 +510,11 @@ class TeamAssignment:
             self.model.add_max_equality(
                 max_count_var, self.team_value_count[attr_name][team_num]
             )
+            # `max_count_var` == `team_size` and `cost_var` == 0 when
+            # there is a shared value by all members of the team. To consider:
+            # do we want to reward all team members sharing more than
+            # one value which would require keeping track of all value counts
+            # that equal team size.
             self.model.add(cost_var == (team_size - max_count_var))
             clustering_costs.append(cost_var)
         return clustering_costs
@@ -678,16 +683,20 @@ class TeamAssignment:
     def evaluate_teams(self):
         if not self.solution_found:
             print("Warning: solution has not been found")
-            return
+            return None
         team_info_list = []
         for team_num, team_size in enumerate(self.team_sizes):
-            for attr_name in self.attr_names:
+            team_partis = self.participants[
+                self.participants["team_num"] == team_num
+            ]
+            team_info = {
+                "team_num": team_num,
+                "team_size": team_size,
+            }
+            for attr_name in self.attr_constraints:
                 ct_type = self.attr_constraints[attr_name]["type"]
                 if ct_type == self.CT_DIVERSIFY:
                     pop_targets = self.value_count_targets(attr_name, team_size)
-                    team_partis = self.participants[
-                        self.participants["team_num"] == team_num
-                    ]
                     team_counts = team_partis[attr_name].value_counts().sort_index()
                     missed = (
                         (pop_targets - team_counts)
@@ -697,35 +706,31 @@ class TeamAssignment:
                         .sum()
                         .astype(int)
                     )
+                    team_info[attr_name] = missed
                 elif ct_type == self.CT_CLUSTER:
-                    team_partis = self.participants[
-                        self.participants["team_num"] == team_num
-                    ]
                     max_count = max_attr_value_count(team_partis[attr_name])
                     missed = team_size - max_count
-                team_info = {
-                    "team_num": team_num,
-                    "team_size": team_size,
-                    "attr_name": attr_name,
-                    "type": ct_type,
-                    "missed": missed,
-                }
-                team_info_list.append(team_info)
+                elif ct_type == self.CT_CLUSTER_NUMERIC:
+                    missed = (team_partis[attr_name].max() - team_partis[attr_name].min())
+                elif ct_type == self.CT_DIFFERENT:
+                    missed = team_size - team_partis[attr_name].nunique()
+                team_info[attr_name] = missed
+            team_info_list.append(team_info)
         team_info = pd.DataFrame(team_info_list)
         return team_info
 
 
 class SolutionCallback(cp_model.CpSolverSolutionCallback):
-    def __init__(self):
+    def __init__(self, stop_after_seconds=None):
         cp_model.CpSolverSolutionCallback.__init__(self)
+        self.stop_after_seconds = stop_after_seconds
 
     def on_solution_callback(self):
-        objective_value = self.ObjectiveValue()
-        num_conflicts = self.NumConflicts()
-        print(
-            f"Number of conflicts: {num_conflicts}, Objective value: {objective_value}"
-        )
-
+        print(f"{self.wall_time=}, {self.objective_value=}, {self.num_conflicts=}")
+        if (self.stop_after_seconds and
+            (self.wall_time > self.stop_after_seconds)):
+            print(f"Stopping search after {self.wall_time} seconds")
+            self.stop_search()
 
 # ## Functions
 #
