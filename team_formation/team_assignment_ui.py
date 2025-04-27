@@ -105,6 +105,17 @@ if "solution_found" in st.session_state:
 
 if "team_eval" in st.session_state:
     st.subheader("Team Metrics")
+    st.markdown(
+        """The team evaluations have a column for each
+constrainted attribute and an integer with the following
+interpretation:
+        
+- "cluster" - the number of members that don't share a working time.
+- "diversify" - the number of participants off from population distribution.
+- "cluster_numeric" - the numeric range of the team's values.
+- "different" - the number of team members that share the attribute value.
+    """
+    )    
     st.dataframe(
         st.session_state["team_eval"],
         hide_index=True,
