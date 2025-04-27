@@ -110,10 +110,10 @@ if "team_eval" in st.session_state:
 constrainted attribute and an integer with the following
 interpretation:
         
-- "cluster" - the number of members that don't share a working time.
-- "diversify" - the number of participants off from population distribution.
-- "cluster_numeric" - the numeric range of the team's values.
-- "different" - the number of team members that share the attribute value.
+- "cluster" - the number of team members that don't share a discrete attribute.
+- "diversify" - the number of team members off from population distribution.
+- "cluster_numeric" - the numeric range/spread of the team member's values.
+- "different" - the number of team members that share attribute values.
     """
     )    
     st.dataframe(
