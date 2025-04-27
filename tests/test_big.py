@@ -35,8 +35,10 @@ def test_big():
     print(ta.participants.sort_values("team_num").to_string())
     team_eval = ta.evaluate_teams()
 
-    # There should be only one miss
-    assert(max(team_eval["missed"] > 0) == 1)
+    # Perfect for working time
+    assert (team_eval["working_time"].sum() == 0)
+    # No more than two misses for gender
+    assert (team_eval["gender"].sum() <= 7)
     print(team_eval.to_string())
 
     

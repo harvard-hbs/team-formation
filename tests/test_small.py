@@ -62,8 +62,11 @@ def test_small():
     print(ta.participants.sort_values("team_num"))
     team_eval = ta.evaluate_teams()
 
-    # There should be only one miss
-    assert(sum(team_eval["missed"] > 0) == 1)
+    # Expected accuracy
+    assert (team_eval["gender"].sum() <= 1)
+    assert (team_eval["job_function"].sum() == 0)
+    assert (team_eval["working_time"].sum() == 0)
+    assert (team_eval["years_experience"].sum() <= 13)
     print(team_eval)
 
 def test_micro():

@@ -1,5 +1,19 @@
 # Change Log
 
+## [1.4.0] - 2025-04-27
+
+### Modified
+
+- Breaking change to format of `TeamAssignment.evaluate_teams().
+
+### Added
+
+- Streamlit UI additions
+  - Make constraints editable in UI
+  - Add team evaluations to UI
+
+- Added evaluation for new constraint types
+
 ## [1.3.0] - 2025-04-12
 
 ### Modified
