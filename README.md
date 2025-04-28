@@ -1,6 +1,62 @@
 # Constraint-Based Team Formation
 
-## Problem Statement
+This constraint-based team formation tools provides an API and a
+simple user interface for dividing a roster of participants into a set
+of smaller teams based on settings (e.g., team size), participant
+attributes as defined in the input data set, and a set of constraints
+defining ideal team composition.
+
+The tool uses the Google OR-Tools [CP-SAT constraint
+solver](https://developers.google.com/optimization/reference/python/sat/python/cp_model)
+to find feasible team assignments.
+
+## Constraint Types
+
+- `cluster` - Used for discrete categories or lists of discrete
+  categories and attempts to find category overlaps in team members.
+  One example would be to find overlapping time availability on
+  discrete time blocks.
+- `cluster_numeric` - Used on numeric attributes. This constraint
+  tries to minimize the range (min to max) of the attribute value over
+  the team.
+- `different` - Used on discrete categories. Attempt to create teams
+  that do not sure the value of this attribute.
+- `diversify` - Used on discrete categories. This constraint tries to
+  match the distribution of the category assignments with those in the
+  full participant population. 
+
+## Constraint Specification and Weight
+
+A constraint consists of the name of an attribute/column name in the
+input dataset, the type of constraint (one of `cluster`,
+`cluster_numeric`, `different`, or `diversify`), and a constraint
+weight. The constraint solving is done by trying to minimize the
+difference of the teams from ideal configuration, multiplying that
+difference by the weight of the constraint. In this way you can
+prioritize the most important constraints over less important ones.
+
+## Search for Solutions
+
+Once the data has been loaded, the settings made, and the constraints
+defined you can search for solutions using the constraint
+solver. Depending on the size of the problem and the particular
+constraints it may not be feasible to find an optimal solution. An
+upper bound in seconds can be provided before generation has
+started. Once that number of seconds has been reached, the best
+solution will be returned at the next opportunity.
+
+## Evaluating a Solution
+
+Once the solver has been stopped and a feasible solution has been
+found it will store a new `team_num` attribute on each of the
+participants in the dataset. In addition, a team evaluation can be
+viewed where all of the constrained attributes will be rated for each
+team. If the constraint has been fully satisfied, its value will be
+zero. Positive values can be interpreted as the number of team members
+for which the constraint is not valid, or the range of the value in
+the team for a `cluster_numeric` constraint.
+
+## Additional Information
 
 Dividing a large learning cohort into smaller teams for group work,
 discussion, or other activity is a common requirement in many learning
