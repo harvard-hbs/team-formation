@@ -29,13 +29,13 @@ python -m team_assignment
   One example would be to find overlapping time availability on
   discrete time blocks.
 - `cluster_numeric` - Used on numeric attributes. This constraint
-  tries to minimize the range (min to max) of the attribute value over
-  the team.
+  tries to minimize the range (min to max) of the attribute's value
+  in each the team.
 - `different` - Used on discrete categories. Attempt to create teams
   that do not sure the value of this attribute.
 - `diversify` - Used on discrete categories. This constraint tries to
   match the distribution of the category assignments with those in the
-  full participant population. 
+  full participant population.
 
 ## Constraint Specification and Weight
 
