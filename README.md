@@ -10,6 +10,18 @@ The tool uses the Google OR-Tools [CP-SAT constraint
 solver](https://developers.google.com/optimization/reference/python/sat/python/cp_model)
 to find feasible team assignments.
 
+## Installation
+
+```
+pip install team-formation
+```
+
+## Run User Interface
+
+```
+$ python -m team_assignment
+```
+
 ## Constraint Types
 
 - `cluster` - Used for discrete categories or lists of discrete
