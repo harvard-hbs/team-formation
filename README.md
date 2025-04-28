@@ -131,8 +131,8 @@ For a detailed log of changes see [CHANGELOG.md](CHANGELOG.md).
 
 ## TODO
 
--[x] Work on simplified SolutionCallback and consider adding to library.
--[x] Go through `create_numeric_clustering_costs` to look for simplifications.
--[ ] Keep track of costs by team and attribute for better introspection.
--[ ] Consider implementing framework for adding new constraint types.
--[ ] Add documentation for new constraint types.
+- [x] Work on simplified SolutionCallback and consider adding to library.
+- [x] Go through `create_numeric_clustering_costs` to look for simplifications.
+- [ ] Keep track of costs by team and attribute for better introspection.
+- [ ] Consider implementing framework for adding new constraint types.
+- [ ] Add documentation for new constraint types.
