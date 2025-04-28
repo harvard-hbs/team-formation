@@ -19,7 +19,7 @@ pip install team-formation
 ## Run User Interface
 
 ```
-python -m team_assignment
+python -m team_formation
 ```
 
 ## Constraint Types
