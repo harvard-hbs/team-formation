@@ -1,8 +1,8 @@
 # Constraint-Based Team Formation
 
-This constraint-based team formation tools provides an API and a
-simple user interface for dividing a roster of participants into a set
-of smaller teams based on settings (e.g., team size), participant
+A constraint-based team formation tools providing an API and a simple
+user interface for dividing a roster of participants into a set of
+smaller teams based on settings (e.g., team size), participant
 attributes as defined in the input data set, and a set of constraints
 defining ideal team composition.
 
@@ -19,7 +19,7 @@ pip install team-formation
 ## Run User Interface
 
 ```
-$ python -m team_assignment
+python -m team_assignment
 ```
 
 ## Constraint Types
