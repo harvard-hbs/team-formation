@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "team-formation"
-version = "1.4.0"
+version = "1.5.0"
 description = "A tool to form teams from a larger group based on weighted constraints"
 readme = "README.md"
 authors = [
@@ -24,6 +24,14 @@ dependencies = [
     "watchdog>=4.0.2",
 ]
 requires-python = ">=3.8"
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "build",
+    "twine",
+    "hatchling",
+]
 
 [project.urls]
 Homepage = "https://github.com/harvard-hbs/team-formation/"

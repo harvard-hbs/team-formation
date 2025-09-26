@@ -1,5 +1,18 @@
 # Change Log
 
+## [1.5.0] - 2025-09-26
+
+### Modified
+
+- Breaking change to pass column names to
+  `team_assignment.working_time.working_times_hours`.
+
+### Added
+
+- Streamlit UI additions
+  - Allow setting of working time column names.
+  - UI updates during constraint solving.
+
 ## [1.4.0] - 2025-04-27
 
 ### Modified

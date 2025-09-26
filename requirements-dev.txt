@@ -1,9 +1,0 @@
-pandas
-ortools
-streamlit
-humanize
-pytest
-build
-twine
-hatchling
-

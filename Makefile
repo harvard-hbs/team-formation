@@ -1,22 +1,27 @@
-.PHONY: install test build check-dist upload
+.PHONY: install test build check-dist upload sync
 
+# Install the package with development dependencies
 install:
-	pip install -r requirements-dev.txt
+	uv sync --extra dev
+
+# Sync dependencies from lock file (faster for CI/existing environments)
+sync:
+	uv sync --extra dev
 
 test:
-	pytest
+	uv run pytest
 
 test-info:
-	pytest --log-cli-level=INFO
+	uv run pytest --log-cli-level=INFO
 
 build:
-	python -m build
+	uv build
 
 check-dist:
-	twine check dist/*
+	uv run twine check dist/*
 
 upload:
-	python -m twine upload dist/*
+	uv run twine upload dist/*
 
 dist-clean:
 	/bin/rm -rf dist
