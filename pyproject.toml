@@ -21,9 +21,9 @@ dependencies = [
     "pandas>=2.0",
     "ortools>=9.2",
     "streamlit>=1.30",
-    "humanize>=4.9",
+    "watchdog>=4.0.2",
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 
 [project.urls]
 Homepage = "https://github.com/harvard-hbs/team-formation/"

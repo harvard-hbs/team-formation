@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import datetime
-import humanize
+from threading import Thread
 
 from team_assignment import TeamAssignment, SolutionCallback
 from team_formation.working_time import working_times_hours
@@ -40,6 +40,9 @@ def update_constraints_callback():
     if "edited_constraints" in st.session_state:
         st.session_state["constraints"] = st.session_state["edited_constraints"]
 
+def solver_worker(ta, callback):
+    ta.solve(solution_callback=callback)
+        
 def generate_teams_callback():
     less_than_target = (st.session_state["over_under_size"] == "Under")
     team_assignment = TeamAssignment(
@@ -62,11 +65,18 @@ def generate_teams_callback():
             roster_csv = roster_teams.to_csv(index=False).encode("utf-8")
             st.session_state["roster_csv"] = roster_csv
             st.session_state["team_eval"] = team_assignment.evaluate_teams()
-
+    
 def translate_working_time():
     roster = st.session_state["roster"]
     ref_date = st.session_state["reference_date"]
-    roster["working_hour_list"] = working_times_hours(roster, ref_date)
+    time_zone_column = st.session_state["time_zone_column"]
+    preferred_time_column = st.session_state["preferred_time_column"]
+    roster["working_hour_list"] = working_times_hours(
+        roster,
+        ref_date,
+        time_zone_column,
+        preferred_time_column,
+    )
     roster["working_hour_list"] = split_list_column(roster["working_hour_list"])
     st.session_state["roster"] = roster
             
@@ -81,7 +91,7 @@ difference (diversification).
 
 The process for creating teams:
 1. Upload the roster of individuals containing your attributes.
-2. Optional: Convert `time_zone` and `working_time` columns into
+2. Optional: Convert time zone and preferred time columns into
    available hours (Working Time Hours).
 3. Upload and edit the constraints.
 4. Set the desired team size, whether to round to over or under target size, and maximum search time.
@@ -164,10 +174,12 @@ st.subheader("Data Upload and Setup")
 
 st.number_input("Target team size",
                 min_value=2,
+                value=7,
                 key="target_team_size")
                 
 st.selectbox("Should team sizes round to over or under the target size",
              options=["Over", "Under"],
+             index=1,
              key="over_under_size")
 
 st.number_input("Maximum search time in seconds",
@@ -187,16 +199,26 @@ st.file_uploader("Assignment constraints",
 
 st.subheader("Working Time Hours")
 
-st.markdown("""
-The working hour calculation expects roster columns of
-`time_zone` and `working_time` and produces a new column
-called `working_hour_list` that can be used in a clustering
-constraint to ensure overlaps in working time.
-""")
+st.markdown(""" The working hour calculation looks for time zone and
+preferred time columns  with names specified below and produces a
+new column called `working_hour_list` that can be used in a clustering
+constraint to ensure overlaps in working time.  """)
 
 st.date_input(
     "Working hour reference date (usually term start date)",
     key="reference_date",
+)
+
+st.text_input(
+    "Time Zone column name",
+    value="time_zone",
+    key="time_zone_column",
+)
+
+st.text_input(
+    "Preferred working times column",
+    value="preferred_time",
+    key="preferred_time_column",
 )
 
 if ("roster" in st.session_state):

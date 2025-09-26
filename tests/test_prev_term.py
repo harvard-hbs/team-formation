@@ -7,25 +7,13 @@ import sys
 # logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 
 from ortools.sat.python import cp_model
-from team_formation.team_assignment import TeamAssignment
+from team_formation.team_assignment import (
+    TeamAssignment,
+    SolutionCallback,
+)
 
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 TEST_ROSTER = os.path.join(TEST_DIR, "data", "roster_prev_term_test.csv")
-
-class SolutionCallback(cp_model.CpSolverSolutionCallback):
-    def __init__(self, stop_after_seconds=None):
-        cp_model.CpSolverSolutionCallback.__init__(self)
-        self.stop_after_seconds = stop_after_seconds
-        
-    def on_solution_callback(self):
-        objective_value = self.ObjectiveValue()
-        num_conflicts = self.NumConflicts()
-        cur_time = datetime.datetime.now()
-        print(
-            f"Wall time: {self.wall_time}, Number of conflicts: {num_conflicts}, Objective value: {objective_value}"
-        )
-        if self.stop_after_seconds and (self.wall_time > self.stop_after_seconds):
-            self.StopSearch()
 
 def roster_model():
     partis = (

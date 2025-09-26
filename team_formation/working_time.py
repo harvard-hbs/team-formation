@@ -9,12 +9,12 @@ WORKING_HOURS = {
 
 INTERVAL_SEPARATOR = ";"
 
-def working_times_hours(df, ref_date):
-    """Convert `time_zone` and `working_time` to UTC start hours."""
+def working_times_hours(df, ref_date, time_zone_col, pref_time_col):
+    """Convert specified columns to UTC start hours."""
     hours_list = []
     for i, row in df.iterrows():
-        time_zone = row["time_zone"]
-        working_time = row["working_time"]
+        time_zone = row[time_zone_col]
+        working_time = row[pref_time_col]
         hours = working_time_hours(time_zone, working_time, ref_date)
         hours_str = INTERVAL_SEPARATOR.join(str(h) for h in hours)
         hours_list.append(hours_str)
@@ -22,6 +22,9 @@ def working_times_hours(df, ref_date):
 
 def working_time_hours(time_zone, working_times, ref_date):
     """Convert a time zone and string of working times into UTC start hours."""
+    # Discard the first UTC part of the time zone if present
+    if time_zone.startswith("(UTC"):
+        time_zone = time_zone.split()[1]
     hour_list = []
     for wt in working_times.split("; "):
         wt_hours = WORKING_HOURS[wt]

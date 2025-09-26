@@ -12,6 +12,8 @@ def test_working_time():
     roster["working_hour_list"] = working_times_hours(
         roster,
         datetime.date.today(),
+        "time_zone",
+        "working_time",
     )
     roster["working_hour_list"] = (
         roster["working_hour_list"].map(lambda hour_str: hour_str.split(";"))
