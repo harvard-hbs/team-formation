@@ -1,7 +1,9 @@
 import streamlit as st
 import pandas as pd
 import datetime
-from threading import Thread
+from threading import Thread, Event
+import time
+import threading
 
 from team_assignment import TeamAssignment, SolutionCallback
 from team_formation.working_time import working_times_hours
@@ -40,8 +42,82 @@ def update_constraints_callback():
     if "edited_constraints" in st.session_state:
         st.session_state["constraints"] = st.session_state["edited_constraints"]
 
-def solver_worker(ta, callback):
-    ta.solve(solution_callback=callback)
+class ProgressTracker:
+    """Thread-safe progress tracker for sharing data between solver and UI."""
+
+    def __init__(self):
+        self.lock = threading.Lock()
+        self.solution_count = 0
+        self.best_objective = float('inf')
+        self.wall_time = 0.0
+        self.num_conflicts = 0
+        self.is_running = False
+        self.is_complete = False
+        self.success = False
+
+    def update(self, solution_count, objective_value, wall_time, num_conflicts):
+        """Update progress data in a thread-safe manner."""
+        with self.lock:
+            self.solution_count = solution_count
+            if objective_value < self.best_objective:
+                self.best_objective = objective_value
+            self.wall_time = wall_time
+            self.num_conflicts = num_conflicts
+
+    def get_status(self):
+        """Get current status in a thread-safe manner."""
+        with self.lock:
+            return {
+                'solution_count': self.solution_count,
+                'best_objective': self.best_objective,
+                'wall_time': self.wall_time,
+                'num_conflicts': self.num_conflicts,
+                'is_running': self.is_running,
+                'is_complete': self.is_complete,
+                'success': self.success
+            }
+
+    def set_running(self, running):
+        with self.lock:
+            self.is_running = running
+
+    def set_complete(self, success):
+        with self.lock:
+            self.is_complete = True
+            self.is_running = False
+            self.success = success
+
+
+class StreamlitSolutionCallback(SolutionCallback):
+    """Solution callback that tracks progress without directly updating UI."""
+
+    def __init__(self, progress_tracker, stop_after_seconds=None):
+        super().__init__(stop_after_seconds=stop_after_seconds)
+        self.progress_tracker = progress_tracker
+        self.solution_count = 0
+
+    def on_solution_callback(self):
+        # Call parent implementation for stdout logging and stop logic
+        super().on_solution_callback()
+
+        # Update progress tracker (thread-safe)
+        self.solution_count += 1
+        self.progress_tracker.update(
+            self.solution_count,
+            self.objective_value,
+            self.wall_time,
+            self.num_conflicts
+        )
+
+def solver_worker(ta, callback, progress_tracker):
+    """Run the solver in a separate thread."""
+    progress_tracker.set_running(True)
+    try:
+        ta.solve(solution_callback=callback)
+        progress_tracker.set_complete(ta.solution_found)
+    except Exception as e:
+        progress_tracker.set_complete(False)
+        raise e
         
 def generate_teams_callback():
     less_than_target = (st.session_state["over_under_size"] == "Under")
@@ -53,18 +129,81 @@ def generate_teams_callback():
     )
     st.session_state["team_assignment"] = team_assignment
     stop_after_seconds = st.session_state["stop_after_seconds"]
-    callback = SolutionCallback(stop_after_seconds=stop_after_seconds)
-    with st.spinner("Generating teams..."):
-        team_assignment.solve(solution_callback=callback)
-        if team_assignment.solution_found:
-            st.session_state["solution_found"] = True
-            roster_teams = (team_assignment
-                            .participants
-                            .sort_values("team_num"))
-            st.session_state["roster"] = roster_teams
-            roster_csv = roster_teams.to_csv(index=False).encode("utf-8")
-            st.session_state["roster_csv"] = roster_csv
-            st.session_state["team_eval"] = team_assignment.evaluate_teams()
+
+    # Create progress tracker and callback
+    progress_tracker = ProgressTracker()
+    callback = StreamlitSolutionCallback(
+        progress_tracker=progress_tracker,
+        stop_after_seconds=stop_after_seconds
+    )
+
+    # Create containers for progress updates
+    progress_container = st.empty()
+    status_container = st.empty()
+
+    # Start solver in background thread
+    solver_thread = Thread(
+        target=solver_worker,
+        args=(team_assignment, callback, progress_tracker)
+    )
+    solver_thread.start()
+
+    # Poll for progress updates
+    with progress_container:
+        st.progress(0.0, text="Starting search...")
+
+    # Update loop
+    while True:
+        status = progress_tracker.get_status()
+
+        if status['is_complete']:
+            break
+
+        if status['is_running']:
+            # Update progress display
+            with status_container:
+                st.markdown(f"""
+                **Search Progress:**
+                - Solutions found: {status['solution_count']}
+                - Best objective: {status['best_objective']}
+                - Elapsed time: {status['wall_time']:.1f}s
+                - Conflicts: {status['num_conflicts']}
+                """)
+
+            # Update progress bar
+            if stop_after_seconds and status['wall_time'] > 0:
+                time_progress = min(status['wall_time'] / stop_after_seconds, 1.0)
+                with progress_container:
+                    st.progress(
+                        time_progress,
+                        text=f"Searching... ({status['wall_time']:.1f}s / {stop_after_seconds}s)"
+                    )
+
+        # Sleep briefly to avoid busy waiting
+        time.sleep(0.5)
+
+    # Wait for thread to complete
+    solver_thread.join()
+
+    # Handle completion
+    final_status = progress_tracker.get_status()
+    if final_status['success']:
+        st.session_state["solution_found"] = True
+        roster_teams = (team_assignment
+                        .participants
+                        .sort_values("team_num"))
+        st.session_state["roster"] = roster_teams
+        roster_csv = roster_teams.to_csv(index=False).encode("utf-8")
+        st.session_state["roster_csv"] = roster_csv
+        st.session_state["team_eval"] = team_assignment.evaluate_teams()
+
+        # Clear progress containers and show completion
+        progress_container.empty()
+        status_container.success("✅ Team generation completed successfully!")
+    else:
+        # Clear progress containers and show failure
+        progress_container.empty()
+        status_container.error("❌ No feasible solution found. Try adjusting constraints or time limit.")
     
 def translate_working_time():
     roster = st.session_state["roster"]
