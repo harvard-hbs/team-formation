@@ -651,8 +651,15 @@ class TeamAssignment:
     # optimal or feasible solution and, if found, the team assignments
     # are assigned to the participants.
 
-    def solve(self, solution_callback=None, log_progress=False):
+    def solve(
+            self,
+            solution_callback=None,
+            log_progress=False,
+            max_time_in_seconds=None,
+    ):
         self.solver = cp_model.CpSolver()
+        if max_time_in_seconds:
+            self.solver.max_time_in_seconds = max_time_in_seconds
         if log_progress:
             self.solver.parameters.log_search_progress = True
             self.solver.parameters.log_to_stdout = True
