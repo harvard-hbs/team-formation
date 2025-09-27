@@ -5,6 +5,7 @@ from threading import Thread, Event
 import time
 import threading
 
+import team_formation
 from team_assignment import TeamAssignment, SolutionCallback
 from team_formation.working_time import working_times_hours
 from ortools.sat.python import cp_model
@@ -220,7 +221,14 @@ def translate_working_time():
     )
     roster["working_hour_list"] = split_list_column(roster["working_hour_list"])
     st.session_state["roster"] = roster
-            
+
+st.set_page_config(
+    layout="wide",
+    page_title="Constraint-Based Team Formation",
+    menu_items={
+        "About": f"# team-formation v{team_formation.__version__}",
+    },
+)
 st.title("Team Formation")
 
 st.markdown("""
@@ -313,30 +321,31 @@ if (("target_team_size" in st.session_state) and
     
 st.subheader("Data Upload and Setup")
 
-st.number_input("Target team size",
-                min_value=2,
-                value=7,
-                key="target_team_size")
-                
-st.selectbox("Should team sizes round to over or under the target size",
-             options=["Over", "Under"],
-             index=1,
-             key="over_under_size")
+setup_1, setup_2, setup_3 = st.columns([1, 2, 1])
 
-st.number_input("Maximum search time in seconds",
-                value=60,
-                min_value=1,
-                key="stop_after_seconds")
+with setup_1:
+    st.number_input("Target team size",
+                    min_value=2,
+                    value=7,
+                    key="target_team_size")
+    st.selectbox("Should team sizes round to over or under the target size",
+                 options=["Over", "Under"],
+                 index=1,
+                 key="over_under_size")
+    st.number_input("Maximum search time in seconds",
+                    value=60,
+                    min_value=1,
+                    key="stop_after_seconds")
 
-st.file_uploader("Participant roster",
-                 type=["csv", "json"],
-                 key="roster_upload",
-                 on_change=roster_upload_callback)
-
-st.file_uploader("Assignment constraints",
-                 type=["csv", "json"],
-                 key="constraints_upload",
-                 on_change=constraints_upload_callback)
+with setup_2:    
+    st.file_uploader("Participant roster",
+                     type=["csv", "json"],
+                     key="roster_upload",
+                     on_change=roster_upload_callback)
+    st.file_uploader("Assignment constraints",
+                     type=["csv", "json"],
+                     key="constraints_upload",
+                     on_change=constraints_upload_callback)
 
 st.subheader("Working Time Hours")
 
@@ -345,22 +354,23 @@ preferred time columns  with names specified below and produces a
 new column called `working_hour_list` that can be used in a clustering
 constraint to ensure overlaps in working time.  """)
 
-st.date_input(
-    "Working hour reference date (usually term start date)",
-    key="reference_date",
-)
+working_1, working_2 = st.columns([1, 4])
 
-st.text_input(
-    "Time Zone column name",
-    value="time_zone",
-    key="time_zone_column",
-)
-
-st.text_input(
-    "Preferred working times column",
-    value="preferred_time",
-    key="preferred_time_column",
-)
+with working_1:
+    st.date_input(
+        "Working hour reference date (usually term start date)",
+        key="reference_date",
+    )
+    st.text_input(
+        "Time Zone column name",
+        value="time_zone",
+        key="time_zone_column",
+    )
+    st.text_input(
+        "Preferred working times column",
+        value="preferred_time",
+        key="preferred_time_column",
+    )
 
 if ("roster" in st.session_state):
     st.button("Translate working time",

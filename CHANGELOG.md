@@ -1,5 +1,17 @@
 # Change Log
 
+## [1.5.2] - 2025-09-26
+
+### Modified
+
+- Modified UI to provide a wide layout and column-based formatting of
+  settings and upload area.
+
+### Added
+
+- About box with version 
+- Page title
+
 ## [1.5.1] - 2025-09-26
 
 ### Modified
