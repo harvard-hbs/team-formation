@@ -1,5 +1,29 @@
 # Change Log
 
+## [1.5.1] - 2025-09-26
+
+### Modified
+
+- Modified UI to use the new `max_time_in_seconds` parameter for
+  stopping the solver more promptly.
+
+### Added
+
+- Added a `max_time_in_seconds` parameter to `solve` method.
+
+## [1.5.0] - 2025-09-26
+
+### Modified
+
+- Breaking change to pass column names to
+  `team_assignment.working_time.working_times_hours`.
+
+### Added
+
+- Streamlit UI additions
+  - Allow setting of working time column names.
+  - UI updates during constraint solving.
+
 ## [1.5.0] - 2025-09-26
 
 ### Modified
