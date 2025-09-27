@@ -10,6 +10,9 @@ from team_assignment import TeamAssignment, SolutionCallback
 from team_formation.working_time import working_times_hours
 from ortools.sat.python import cp_model
 
+# Handle working time in the roster download
+ENABLE_WORKING_TIME = False
+
 def roster_upload_callback():
     roster_upload = st.session_state["roster_upload"]
     if roster_upload.type == "text/csv":
@@ -347,32 +350,33 @@ with setup_2:
                      key="constraints_upload",
                      on_change=constraints_upload_callback)
 
-st.subheader("Working Time Hours")
+if ENABLE_WORKING_TIME:    
+    st.subheader("Working Time Hours")
 
-st.markdown(""" The working hour calculation looks for time zone and
-preferred time columns  with names specified below and produces a
-new column called `working_hour_list` that can be used in a clustering
-constraint to ensure overlaps in working time.  """)
+    st.markdown(""" The working hour calculation looks for time zone and
+    preferred time columns with names specified below and produces a
+    new column called `working_hour_list` that can be used in a clustering
+    constraint to ensure overlaps in working time.  """)
 
-working_1, working_2 = st.columns([1, 4])
+    working_1, working_2 = st.columns([1, 4])
 
-with working_1:
-    st.date_input(
-        "Working hour reference date (usually term start date)",
-        key="reference_date",
-    )
-    st.text_input(
-        "Time Zone column name",
-        value="time_zone",
-        key="time_zone_column",
-    )
-    st.text_input(
-        "Preferred working times column",
-        value="preferred_time",
-        key="preferred_time_column",
-    )
+    with working_1:
+        st.date_input(
+            "Working hour reference date (usually term start date)",
+            key="reference_date",
+        )
+        st.text_input(
+            "Time Zone column name",
+            value="time_zone",
+            key="time_zone_column",
+        )
+        st.text_input(
+            "Preferred working times column",
+            value="preferred_time",
+            key="preferred_time_column",
+        )
 
-if ("roster" in st.session_state):
-    st.button("Translate working time",
-              on_click=translate_working_time)
+    if ("roster" in st.session_state):
+        st.button("Translate working time",
+                  on_click=translate_working_time)
 
