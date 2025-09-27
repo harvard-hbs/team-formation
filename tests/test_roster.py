@@ -33,7 +33,10 @@ def roster_model():
 
 def test_roster():
     ta = roster_model()
-    ta.solve(solution_callback=SolutionCallback(stop_after_seconds=15))
+    ta.solve(
+        solution_callback=SolutionCallback(),
+        max_time_in_seconds=20,
+    )
     print(ta.participants.sort_values("team_num").to_string())
     print([ta.solver.Value(var) for var in ta.attr_costs])
 

@@ -109,11 +109,14 @@ class StreamlitSolutionCallback(SolutionCallback):
             self.num_conflicts
         )
 
-def solver_worker(ta, callback, progress_tracker):
+def solver_worker(ta, callback, progress_tracker, max_time):
     """Run the solver in a separate thread."""
     progress_tracker.set_running(True)
     try:
-        ta.solve(solution_callback=callback)
+        ta.solve(
+            solution_callback=callback,
+            max_time_in_seconds=max_time,
+        )
         progress_tracker.set_complete(ta.solution_found)
     except Exception as e:
         progress_tracker.set_complete(False)
@@ -134,7 +137,6 @@ def generate_teams_callback():
     progress_tracker = ProgressTracker()
     callback = StreamlitSolutionCallback(
         progress_tracker=progress_tracker,
-        stop_after_seconds=stop_after_seconds
     )
 
     # Create containers for progress updates
@@ -144,7 +146,7 @@ def generate_teams_callback():
     # Start solver in background thread
     solver_thread = Thread(
         target=solver_worker,
-        args=(team_assignment, callback, progress_tracker)
+        args=(team_assignment, callback, progress_tracker, stop_after_seconds)
     )
     solver_thread.start()
 
