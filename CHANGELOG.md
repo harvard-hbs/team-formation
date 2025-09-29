@@ -1,12 +1,10 @@
 # Change Log
 
-## [1.5.3] - 2025-09-27
+## [1.5.4] - 2025-09-29
 
-### Modified
+### Added
 
-- Disabled the working time settings in the UI by default.
-- Modification to allow passing command line arguments to Streamlit
-  when called as `python -m team_formation --server.port=8001`.
+- Added display of means of evaluation statistics.
 
 ## [1.5.2] - 2025-09-26
 
