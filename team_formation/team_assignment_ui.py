@@ -255,7 +255,7 @@ st.subheader("Roster")
 
 if "roster" in st.session_state:
     roster = st.session_state["roster"]
-    st.dataframe(roster, hide_index=True)
+    st.dataframe(roster)
 else:
     st.write("*Roster will appear hear after uploading*")
 
@@ -277,41 +277,50 @@ interpretation:
 - "cluster_numeric" - the numeric range/spread of the team member's values.
 - "different" - the number of team members that share attribute values.
     """
-    )    
-    st.dataframe(
-        st.session_state["team_eval"],
-        hide_index=True,
     )
+    team_col_1, team_col_2 = st.columns([1, 1])
+    with team_col_1:
+        team_eval = st.session_state["team_eval"]
+        st.dataframe(
+            team_eval,
+            hide_index=True,
+            width=None,
+        )
+        st.dataframe(
+            (team_eval.drop(columns=["team_num", "team_size"]).mean().to_frame(name="mean"))
+        )
     
 st.subheader("Constraints")
     
 if "constraints" in st.session_state:
-    # Create an editable data frame and store the edited version back
-    edited_constraints = st.data_editor(
-        st.session_state["constraints"],
-        hide_index=True,
-        num_rows="dynamic",
-        column_config={
-            "attribute": st.column_config.TextColumn(
-                "Attribute",
-                required=True,
-            ),
-            "constraint_type": st.column_config.SelectboxColumn(
-                "Constraint Type",
-                required=True,
-                options=TeamAssignment.CONSTRAINT_TYPES,
-            ),
-            "weight": st.column_config.NumberColumn(
-                "Weight",
-                required=True,
-                min_value=0,
-                max_value=100,
-            )
-        },
-        key="constraints_editor"
-    )
-    # Update the constraints in session state with the edited version
-    st.session_state["constraints"] = edited_constraints
+    const_col_1, const_col_2 = st.columns([1, 1])
+    with const_col_1:
+        # Create an editable data frame and store the edited version back
+        edited_constraints = st.data_editor(
+            st.session_state["constraints"],
+            hide_index=True,
+            num_rows="dynamic",
+            column_config={
+                "attribute": st.column_config.TextColumn(
+                    "Attribute",
+                    required=True,
+                ),
+                "constraint_type": st.column_config.SelectboxColumn(
+                    "Constraint Type",
+                    required=True,
+                    options=TeamAssignment.CONSTRAINT_TYPES,
+                ),
+                "weight": st.column_config.NumberColumn(
+                    "Weight",
+                    required=True,
+                    min_value=0,
+                    max_value=100,
+                )
+            },
+            key="constraints_editor"
+        )
+        # Update the constraints in session state with the edited version
+        st.session_state["constraints"] = edited_constraints
 else:
     st.write("*Constraints will appear here after upload*")
 
