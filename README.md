@@ -10,16 +10,40 @@ The tool uses the Google OR-Tools [CP-SAT constraint
 solver](https://developers.google.com/optimization/reference/python/sat/python/cp_model)
 to find feasible team assignments.
 
-## Installation
+## Deployment from PyPi
+
+The Streamlit team formation UI can be run directly from the PyPi
+[team-formation]() package using `uv` (how to install `uv`)[].
 
 ```
-pip install team-formation
+uv run --with team-formation python -m team_formation
 ```
 
-## Run User Interface
+## Development
+
+After cloning the repository the Makefile contains the following
+development operations:
 
 ```
-python -m team_formation
+uv sync --extra dev         # install 
+uv run pytest               # test 
+uv build                    # build as package
+uv run twine check dist/*   # check the distribution 
+uv run twine upload dist/*  # upload to PyPi
+```
+
+Here is an example session for creating teams using the API:
+
+```
+uv run python
+from team_formation.team_assignment import TeamAssignment, SolutionCallback
+import pandas as pd
+roster = pd.read_csv("climb_roster_1.csv")
+constraints = pd.read_csv("climb_constraints.csv")
+ta = TeamAssignment(roster, constraints, 7, less_than_target=False)
+ta.solve(solution_callback=SolutionCallback(), max_time_in_seconds=60)
+ta.evaluate_teams()
+ta.participants.to_csv("climb_roster_w_teams.csv")
 ```
 
 ## Constraint Types

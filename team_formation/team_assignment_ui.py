@@ -128,6 +128,8 @@ def solver_worker(ta, callback, progress_tracker, max_time):
         
 def generate_teams_callback():
     less_than_target = (st.session_state["over_under_size"] == "Under")
+    print("Generating teams with constraints:")
+    print(st.session_state["constraints"])
     team_assignment = TeamAssignment(
         st.session_state["roster"],
         st.session_state["constraints"],
@@ -284,7 +286,6 @@ interpretation:
         st.dataframe(
             team_eval,
             hide_index=True,
-            width=None,
         )
         st.dataframe(
             (team_eval.drop(columns=["team_num", "team_size"]).mean().to_frame(name="mean"))

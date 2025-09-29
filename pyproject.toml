@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "team-formation"
-version = "1.5.4"
+version = "1.5.5"
 description = "A tool to form teams from a larger group based on weighted constraints"
 readme = "README.md"
 authors = [

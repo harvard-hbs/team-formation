@@ -1,5 +1,17 @@
 # Change Log
 
+## [1.5.5] - 2025-09-29
+
+### Modified
+
+- Fixed bug with width in evaluation printout.
+- Verified that editing constraint weight values works via logging.
+
+### Added
+
+- Documentation on deploying and developing using uv.
+- Added another API use case in README.md
+
 ## [1.5.4] - 2025-09-29
 
 ### Added
