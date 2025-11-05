@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.5.6] - 2025-10-28
+
+### Added
+
+- Constraint validation for required columns and attributes present in roster
+
 ## [1.5.5] - 2025-09-29
 
 ### Modified

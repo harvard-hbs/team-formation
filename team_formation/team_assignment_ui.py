@@ -32,7 +32,26 @@ def create_list_columns(df):
 def split_list_column(series):
     new_series = series.map(lambda str_val: str_val.split(";"))
     return new_series
-    
+
+def constraints_are_valid():
+    valid = True
+    constraints = st.session_state["constraints"]
+    constraint_columns = constraints.columns
+    required_columns = ["attribute", "type", "weight"]
+    for req_col in required_columns:
+        if req_col not in constraint_columns:
+            st.error(f"Constraints missing required column: '{req_col}'")
+            valid = False
+    if "roster" in st.session_state:
+        roster = st.session_state["roster"]
+        attributes = list(constraints["attribute"])
+        roster_columns = list(roster.columns)
+        for attribute in attributes:
+            if attribute not in roster_columns:
+                st.error(f"Constraint does not exist as roster column: '{attribute}'")
+                valid = False
+    return valid
+
 def constraints_upload_callback():
     constraints_upload = st.session_state["constraints_upload"]
     if constraints_upload.type == "text/csv":
@@ -40,6 +59,7 @@ def constraints_upload_callback():
     elif constraints_upload.type == "application/json":
         constraints = pd.read_json(constraints_upload)
     st.session_state["constraints"] = constraints
+    constraints_are_valid()
 
 def update_constraints_callback():
     """Update the constraints in the session state when edited in the UI"""
@@ -127,6 +147,8 @@ def solver_worker(ta, callback, progress_tracker, max_time):
         raise e
         
 def generate_teams_callback():
+    if not constraints_are_valid():
+        return
     less_than_target = (st.session_state["over_under_size"] == "Under")
     print("Generating teams with constraints:")
     print(st.session_state["constraints"])
