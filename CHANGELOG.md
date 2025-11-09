@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.5.7] - 2025-11-09
+
+### Modified
+
+- Upgraded and tested with Google-OR Tools 9.14
+
 ## [1.5.6] - 2025-10-28
 
 ### Added
