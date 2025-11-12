@@ -22,12 +22,17 @@ dependencies = [
     "ortools>=9.2",
     "streamlit>=1.30",
     "watchdog>=4.0.2",
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "sse-starlette>=1.6.5",
 ]
 requires-python = ">=3.8"
 
 [project.optional-dependencies]
 dev = [
     "pytest",
+    "pytest-asyncio",
+    "httpx",
     "build",
     "twine",
     "hatchling",
@@ -39,6 +44,7 @@ Changelog = "https://raw.githubusercontent.com/harvard-hbs/team-formation/refs/h
 
 [project.scripts]
 team-formation = "team_formation.__main__:main"
+team-formation-api = "team_formation.api.main:run"
 
 [tool.hatch.build.targets.sdist]
 include = [
