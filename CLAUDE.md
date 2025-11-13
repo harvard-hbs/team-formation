@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Python package for constraint-based team formation that uses Google OR-Tools CP-SAT solver to optimally assign participants to teams based on weighted constraints. The tool provides both a programmatic API and a Streamlit web interface.
+This is a Python package for constraint-based team formation that uses Google OR-Tools CP-SAT solver to optimally assign participants to teams based on weighted constraints. The tool provides a programmatic API, a FastAPI REST API server with real-time progress streaming, and a Streamlit web interface.
 
 ## Common Development Commands
 
@@ -45,6 +45,11 @@ make upload
 ```bash
 # Start Streamlit UI
 python -m team_formation
+
+# Start FastAPI REST API server
+team-formation-api
+# or
+python -m team_formation.api.main
 
 # Use programmatically
 python -c "from team_formation.team_assignment import TeamAssignment; print('API ready')"
@@ -103,6 +108,16 @@ The UI (`team_assignment_ui.py`) provides:
 - Team evaluation and export functionality
 - Session state management for multi-step workflow
 
+### FastAPI REST API Architecture
+
+The API (`team_formation/api/`) provides:
+- **`main.py`** - FastAPI application with endpoints and SSE streaming
+- **`models.py`** - Pydantic models for request/response validation
+- **`callbacks.py`** - SSE solution callback for real-time progress updates
+- POST `/assign_teams` endpoint with Server-Sent Events for progress streaming
+- Async constraint solving with threading
+- OpenAPI/Swagger documentation at `/docs`
+
 ### Testing Structure
 
 Tests are organized by functionality:
@@ -110,6 +125,7 @@ Tests are organized by functionality:
 - `test_diversify.py` - Diversification constraint tests
 - `test_num_cluster.py` - Numeric clustering tests
 - `test_working_time.py` - Time-based constraint tests
+- `test_api.py` - FastAPI endpoint tests with async/httpx
 - Large test datasets in `tests/data/`
 
 ## Important Implementation Details
@@ -126,5 +142,7 @@ Tests are organized by functionality:
 
 ### Package Structure
 - Built using hatchling (not setuptools)
-- Console script entry point: `team-formation = "team_formation.__main__:main"`
-- Version managed in `_version.txt`
+- Console script entry points:
+  - `team-formation = "team_formation.__main__:main"` (Streamlit UI)
+  - `team-formation-api = "team_formation.api.main:run"` (FastAPI server)
+- Version managed in `pyproject.toml`

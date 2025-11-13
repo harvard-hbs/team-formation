@@ -19,6 +19,36 @@ The Streamlit team formation UI can be run directly from the PyPi
 uv run --with team-formation python -m team_formation
 ```
 
+## REST API Server
+
+The package also provides a FastAPI-based REST API server with Server-Sent Events (SSE) for real-time progress updates during team formation.
+
+### Running the API Server
+
+```bash
+# Run directly from PyPi using uv
+uv run --with team-formation team-formation-api
+
+# Or in development
+uv run team-formation-api
+```
+
+The API server will start on `http://localhost:8000` by default.
+
+### API Endpoints
+
+- `POST /assign_teams` - Create team assignments with real-time progress streaming via SSE
+- `GET /` - API information and health check
+
+### Features
+
+- Real-time progress updates via Server-Sent Events (SSE)
+- Comprehensive request validation with Pydantic models
+- Async constraint solving with progress callbacks
+- Full OpenAPI/Swagger documentation at `/docs`
+
+For detailed API documentation, examples, and usage instructions, see [team_formation/api/README.md](team_formation/api/README.md).
+
 ## Development
 
 After cloning the repository the Makefile contains the following

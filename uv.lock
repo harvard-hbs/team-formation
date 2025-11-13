@@ -3911,7 +3911,7 @@ wheels = [
 
 [[package]]
 name = "team-formation"
-version = "1.5.7"
+version = "1.6.0"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi" },
