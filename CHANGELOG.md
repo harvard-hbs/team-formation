@@ -1,5 +1,24 @@
 # Change Log
 
+## [1.6.0] - 2025-11-13
+
+### Added
+
+- **FastAPI REST API endpoint** with Server-Sent Events (SSE) for real-time progress streaming
+  - POST `/assign_teams` endpoint for team formation via HTTP API
+  - Real-time progress updates during constraint solving
+  - Comprehensive request validation with Pydantic models
+  - New console script: `team-formation-api` to run the API server
+  - Full test coverage with 12 API tests
+  - API documentation and examples in `team_formation/api/README.md`
+
+### Dependencies
+
+- Added `fastapi>=0.104.0` for REST API functionality
+- Added `uvicorn[standard]>=0.24.0` for ASGI server
+- Added `sse-starlette>=1.6.5` for Server-Sent Events support
+- Added `pytest-asyncio` and `httpx` for async API testing (dev dependencies)
+
 ## [1.5.7] - 2025-11-09
 
 ### Modified
