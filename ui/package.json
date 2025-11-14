@@ -1,0 +1,30 @@
+{
+  "name": "team-formation-ui",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.5.13",
+    "vuetify": "^3.7.5",
+    "pinia": "^2.3.0",
+    "axios": "^1.7.9",
+    "papaparse": "^5.4.1",
+    "chart.js": "^4.4.7",
+    "vue-chartjs": "^5.3.3",
+    "@microsoft/fetch-event-source": "^2.0.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "vite": "^6.0.3",
+    "vue-tsc": "^2.2.0",
+    "typescript": "^5.7.2",
+    "@mdi/font": "^7.4.47",
+    "@types/node": "^22.10.1",
+    "@types/papaparse": "^5.3.15",
+    "vite-plugin-vuetify": "^2.0.4"
+  }
+}
