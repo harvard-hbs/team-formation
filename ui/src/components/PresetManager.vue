@@ -4,12 +4,12 @@
     <v-menu>
       <template v-slot:activator="{ props }">
         <v-btn
-          color="secondary"
+          variant="outlined"
           size="small"
           prepend-icon="mdi-bookmark"
           v-bind="props"
         >
-          Presets
+          Select Preset
         </v-btn>
       </template>
 

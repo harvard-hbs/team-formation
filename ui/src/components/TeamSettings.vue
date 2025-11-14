@@ -1,7 +1,7 @@
 <template>
-  <v-card>
-    <v-card-title>Team Details</v-card-title>
-    <v-card-text>
+  <v-card elevation="0">
+    <v-card-title class="text-h5 font-weight-bold px-0">Team Details</v-card-title>
+    <v-card-text class="px-0">
       <!-- Target team size -->
       <div class="mb-6">
         <label class="text-subtitle-2 d-block mb-2">Target Team Size</label>
@@ -72,26 +72,31 @@
       </div>
 
       <!-- Action buttons -->
-      <div class="d-flex justify-space-between align-center">
+      <div class="mb-4">
         <v-btn
-          color="error"
-          variant="outlined"
-          prepend-icon="mdi-refresh"
-          :disabled="!canReset"
-          @click="handleReset"
-        >
-          Reset
-        </v-btn>
-
-        <v-btn
-          color="primary"
-          size="large"
+          color="accent"
+          size="x-large"
           prepend-icon="mdi-play"
           :disabled="!store.canRunAssignment"
           :loading="store.appState === AppState.RUNNING"
           @click="handleCreateTeams"
+          block
+          class="create-teams-btn"
         >
           Create Teams
+        </v-btn>
+      </div>
+
+      <div class="text-center">
+        <v-btn
+          color="error"
+          variant="text"
+          prepend-icon="mdi-refresh"
+          size="small"
+          :disabled="!canReset"
+          @click="handleReset"
+        >
+          Reset
         </v-btn>
       </div>
 
@@ -118,8 +123,8 @@ import { AppState } from '@/types'
 const store = useTeamFormationStore()
 
 const sizeOptions = [
-  { title: 'Make teams slightly larger', value: false },
-  { title: 'Make teams slightly smaller', value: true }
+  { title: 'Make teams one member smaller', value: true },
+  { title: 'Make teams one member larger', value: false }
 ]
 
 const canReset = computed(() => {
@@ -177,7 +182,7 @@ async function handleCreateTeams() {
         store.setError(event.message)
       },
       onConnectionError: (error) => {
-        store.setError(`Connection error: ${error.message}`)
+        store.setError(error.message)
       }
     })
   } catch (error) {
@@ -198,5 +203,10 @@ async function handleCreateTeams() {
 
 :deep(.team-size-input input) {
   text-align: center;
+}
+
+.create-teams-btn {
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 </style>

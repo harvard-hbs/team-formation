@@ -1,11 +1,11 @@
 <template>
-  <v-card>
-    <v-card-title class="d-flex justify-space-between align-center">
-      <span>Constraints</span>
+  <v-card elevation="0">
+    <v-card-title class="d-flex justify-space-between align-center px-0">
+      <span class="text-h5 font-weight-bold">Constraints</span>
       <div>
         <PresetManager class="mr-2" />
         <v-btn
-          color="primary"
+          color="accent"
           size="small"
           prepend-icon="mdi-plus"
           :disabled="!store.hasParticipants"
@@ -16,7 +16,7 @@
       </div>
     </v-card-title>
 
-    <v-card-text>
+    <v-card-text class="px-0">
       <v-alert v-if="!store.hasParticipants" type="info" variant="tonal" class="mb-4">
         Upload participant data first to add constraints.
       </v-alert>
@@ -28,7 +28,7 @@
       </div>
 
       <!-- Constraints list -->
-      <v-list v-if="store.constraints.length > 0">
+      <v-list v-if="store.constraints.length > 0" class="pa-0">
         <v-list-item
           v-for="(constraint, index) in store.constraints"
           :key="index"
@@ -198,10 +198,10 @@ function getConstraintDescription(type: ConstraintType): string {
 
 <style scoped>
 .constraint-item {
-  background-color: rgba(0, 0, 0, 0.02);
+  background-color: #fafafa;
 }
 
 .border {
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  border: 1px solid #e0e0e0;
 }
 </style>

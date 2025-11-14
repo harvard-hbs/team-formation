@@ -46,6 +46,11 @@ export async function assignTeams(
       // Handle incoming messages
       onmessage(event) {
         try {
+          // Skip empty messages (keep-alive pings)
+          if (!event.data || event.data.trim() === '') {
+            return
+          }
+
           // Debug logging - log raw event first
           console.log('SSE raw event:', {
             event: event.event,
@@ -98,7 +103,9 @@ export async function assignTeams(
         }
 
         if (callbacks.onConnectionError) {
-          callbacks.onConnectionError(error instanceof Error ? error : new Error('Connection error'))
+          // Provide user-friendly error message
+          const userError = new Error('Cannot reach team formation service')
+          callbacks.onConnectionError(userError)
         }
         // Stop retrying by throwing
         throw error
@@ -112,6 +119,10 @@ export async function assignTeams(
       console.log('Request cancelled')
     } else {
       console.error('Request failed:', error)
+      // Transform "Failed to fetch" into a user-friendly message
+      if (error instanceof Error && error.message.includes('Failed to fetch')) {
+        throw new Error('Cannot reach team formation service')
+      }
       throw error
     }
   } finally {

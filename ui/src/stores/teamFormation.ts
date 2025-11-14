@@ -25,7 +25,7 @@ export const useTeamFormationStore = defineStore('teamFormation', () => {
 
   // Team settings
   const targetTeamSize = ref<number>(7)
-  const lessThanTarget = ref<boolean>(false)
+  const lessThanTarget = ref<boolean>(true)
   const maxTime = ref<number>(60)
 
   // Application state
@@ -163,10 +163,6 @@ export const useTeamFormationStore = defineStore('teamFormation', () => {
     })
 
     // Warnings
-    if (constraints.value.length === 0) {
-      warnings.push('No constraints defined. Teams will be assigned randomly.')
-    }
-
     if (targetTeamSize.value <= 2) {
       errors.push('Target team size must be greater than 2')
     }
@@ -232,7 +228,7 @@ export const useTeamFormationStore = defineStore('teamFormation', () => {
     stats.value = null
     errorMessage.value = null
     targetTeamSize.value = 7
-    lessThanTarget.value = false
+    lessThanTarget.value = true
     maxTime.value = 60
     appState.value = AppStateEnum.IDLE
   }

@@ -1,13 +1,13 @@
 <template>
   <v-app>
-    <v-app-bar color="primary" prominent elevation="2">
-      <v-app-bar-title>
-        <v-icon class="mr-2" size="large">mdi-account-group</v-icon>
+    <v-app-bar color="primary" elevation="0" height="64">
+      <v-app-bar-title class="text-body-1 font-weight-regular">
+        <v-icon class="mr-2" size="small">mdi-account-group</v-icon>
         Team Formation Service
       </v-app-bar-title>
     </v-app-bar>
 
-    <v-main>
+    <v-main class="bg-grey-lighten-4">
       <v-container fluid class="pa-6">
         <v-row>
           <v-col cols="12">
@@ -15,17 +15,13 @@
           </v-col>
         </v-row>
 
-        <v-divider class="my-6"></v-divider>
-
-        <v-row>
+        <v-row class="mt-6">
           <v-col cols="12">
             <RosterSection />
           </v-col>
         </v-row>
 
-        <v-divider class="my-6"></v-divider>
-
-        <v-row>
+        <v-row class="mt-6">
           <v-col cols="12">
             <TeamsSection />
           </v-col>

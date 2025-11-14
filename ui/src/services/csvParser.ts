@@ -18,6 +18,7 @@ export function parseCSV(file: File): Promise<ParseResult> {
       header: true, // First row as column headers
       skipEmptyLines: true,
       dynamicTyping: true, // Automatically convert numbers
+      delimiter: ',', // Force comma as delimiter (not semicolon)
       transform: (value: string) => {
         // Trim whitespace
         return value.trim()
@@ -55,10 +56,57 @@ export function parseCSV(file: File): Promise<ParseResult> {
           return
         }
 
+        // Process _list columns: split semicolon-separated values into arrays
+        const processedData = results.data.map((row: any, rowIndex: number) => {
+          const processedRow = { ...row }
+
+          // Find all columns ending with "_list"
+          Object.keys(processedRow).forEach(key => {
+            if (key.endsWith('_list')) {
+              const value = processedRow[key]
+
+              // Skip if value is null, undefined, or empty
+              if (value === null || value === undefined || value === '') {
+                processedRow[key] = []
+                return
+              }
+
+              // Convert to string and split on semicolon
+              const stringValue = String(value)
+
+              // Debug logging for first few rows
+              if (rowIndex < 3) {
+                console.log(`Processing ${key}:`, {
+                  original: value,
+                  stringValue: stringValue,
+                  afterSplit: stringValue.split(';')
+                })
+              }
+
+              processedRow[key] = stringValue
+                .split(';')
+                .map(item => item.trim())
+                .filter(item => item !== '') // Remove empty strings
+                .map(item => {
+                  // Try to parse as number if possible
+                  const num = Number(item)
+                  return isNaN(num) ? item : num
+                })
+
+              // Debug logging for first few rows
+              if (rowIndex < 3) {
+                console.log(`Result for ${key}:`, processedRow[key])
+              }
+            }
+          })
+
+          return processedRow
+        })
+
         resolve({
           success: true,
-          data: results.data as Participant[],
-          rowCount: results.data.length,
+          data: processedData as Participant[],
+          rowCount: processedData.length,
           columnCount
         })
       },
@@ -76,7 +124,20 @@ export function parseCSV(file: File): Promise<ParseResult> {
  * Export participants to CSV format
  */
 export function exportToCSV(data: Participant[], filename: string = 'team-assignments.csv'): void {
-  const csv = Papa.unparse(data, {
+  // Convert array values back to semicolon-separated strings for _list columns
+  const exportData = data.map(row => {
+    const exportRow = { ...row }
+
+    Object.keys(exportRow).forEach(key => {
+      if (key.endsWith('_list') && Array.isArray(exportRow[key])) {
+        exportRow[key] = (exportRow[key] as any[]).join(';')
+      }
+    })
+
+    return exportRow
+  })
+
+  const csv = Papa.unparse(exportData, {
     quotes: true, // Quote all fields
     header: true
   })
