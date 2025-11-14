@@ -1,6 +1,6 @@
 <template>
-  <v-card class="mb-4">
-    <v-card-title>Team Information</v-card-title>
+  <v-card class="mb-4" elevation="0">
+    <v-card-title class="text-h4 font-weight-bold">Team Information</v-card-title>
     <v-card-text>
       <v-row dense>
         <v-col cols="12" md="6">

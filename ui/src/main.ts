@@ -16,13 +16,15 @@ const vuetify = createVuetify({
     themes: {
       light: {
         colors: {
-          primary: '#1976D2',
+          primary: '#D4B896',      // Beige/tan for header and primary elements
           secondary: '#424242',
-          accent: '#82B1FF',
+          accent: '#8B2F47',       // Burgundy/maroon for buttons and accents
           error: '#FF5252',
           info: '#2196F3',
           success: '#4CAF50',
           warning: '#FFC107',
+          surface: '#FFFFFF',
+          background: '#F5F5F5',
         },
       },
     },
