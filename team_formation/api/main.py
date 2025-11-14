@@ -5,6 +5,7 @@ import json
 import logging
 from typing import Any, Dict
 
+import numpy as np
 import pandas as pd
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -20,7 +21,7 @@ from team_formation.api.models import (
 )
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
 # Create FastAPI app
@@ -85,6 +86,9 @@ def convert_result_to_response(
     Returns:
         Dictionary with participants and stats
     """
+    # Replace NaN values with None (which becomes null in JSON)
+    participants_df = participants_df.replace({pd.NA: None, pd.NaT: None, np.nan: None})
+
     # Convert DataFrame to list of dicts
     result_data = participants_df.to_dict(orient="records")
 
@@ -191,8 +195,8 @@ async def event_generator(request: TeamAssignmentRequest):
         # Stream progress events
         while not assignment_task.done():
             try:
-                # Wait for event with timeout to check task status
-                event = await asyncio.wait_for(event_queue.get(), timeout=0.5)
+                # Wait for event with shorter timeout for more responsive streaming
+                event = await asyncio.wait_for(event_queue.get(), timeout=0.1)
 
                 # Send progress event
                 yield {
@@ -216,15 +220,6 @@ async def event_generator(request: TeamAssignmentRequest):
         result = await assignment_task
 
         # Send completion event with results
-        completion_event = ProgressEvent(
-            event_type="complete",
-            solution_count=result["stats"]["solution_count"],
-            objective_value=0.0,  # Final objective included in progress events
-            wall_time=result["stats"]["wall_time"],
-            num_conflicts=0,
-            message=f"Team assignment complete! Created {result['stats']['num_teams']} teams.",
-        )
-
         yield {
             "event": "complete",
             "data": json.dumps(result),
@@ -347,7 +342,7 @@ def run():
         host="0.0.0.0",
         port=8000,
         reload=True,
-        log_level="info",
+        log_level="warning",
     )
 
 
