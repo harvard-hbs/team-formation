@@ -27,81 +27,88 @@
         </v-alert>
       </div>
 
-      <!-- Constraints list -->
-      <v-list v-if="store.constraints.length > 0" class="pa-0">
-        <v-list-item
-          v-for="(constraint, index) in store.constraints"
-          :key="index"
-          class="constraint-item mb-2 pa-3 border rounded"
-        >
-          <v-row dense align="center">
+      <!-- Constraints table -->
+      <v-table v-if="store.constraints.length > 0" density="compact" class="constraints-table">
+        <thead>
+          <tr>
+            <th class="text-left">Attribute</th>
+            <th class="text-left">
+              <span>Rule Type</span>
+              <v-tooltip location="bottom" max-width="400">
+                <template v-slot:activator="{ props }">
+                  <v-icon v-bind="props" size="small" class="ml-1">mdi-information-outline</v-icon>
+                </template>
+                <div>
+                  <div class="mb-2"><strong>Cluster:</strong> Group participants with shared discrete attribute values together in teams</div>
+                  <div class="mb-2"><strong>Cluster Numeric:</strong> Minimize numeric attribute ranges within teams (e.g., similar experience levels)</div>
+                  <div class="mb-2"><strong>Different:</strong> Ensure teams don't share specific attribute values (e.g., no two people from same department)</div>
+                  <div><strong>Diversify:</strong> Match team attribute distributions to overall population (e.g., gender balance)</div>
+                </div>
+              </v-tooltip>
+            </th>
+            <th class="text-left weight-column">Weight</th>
+            <th class="text-center actions-column"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="(constraint, index) in store.constraints"
+            :key="index"
+            class="constraint-row"
+          >
             <!-- Attribute selector -->
-            <v-col cols="12" sm="4">
+            <td>
               <v-select
                 :model-value="constraint.attribute"
                 :items="store.availableAttributes"
-                label="Attribute"
                 density="compact"
+                variant="underlined"
+                hide-details="auto"
                 :error="!isAttributeValid(constraint.attribute)"
                 :error-messages="getAttributeError(constraint.attribute)"
                 @update:model-value="(value) => updateConstraint(index, 'attribute', value)"
-              >
-                <template v-slot:prepend>
-                  <v-icon size="small">mdi-format-list-bulleted</v-icon>
-                </template>
-              </v-select>
-            </v-col>
+              ></v-select>
+            </td>
 
             <!-- Type selector -->
-            <v-col cols="12" sm="3">
+            <td>
               <v-select
                 :model-value="constraint.type"
                 :items="constraintTypes"
-                label="Rule Type"
                 density="compact"
+                variant="underlined"
+                hide-details
                 @update:model-value="(value) => updateConstraint(index, 'type', value)"
-              >
-                <template v-slot:prepend>
-                  <v-icon size="small">mdi-cog</v-icon>
-                </template>
-              </v-select>
-            </v-col>
+              ></v-select>
+            </td>
 
             <!-- Weight input -->
-            <v-col cols="12" sm="3">
+            <td>
               <v-text-field
                 :model-value="constraint.weight"
-                label="Weight"
                 type="number"
                 density="compact"
+                variant="underlined"
+                hide-details="auto"
                 :error="constraint.weight <= 0"
                 :error-messages="constraint.weight <= 0 ? 'Must be > 0' : ''"
                 @update:model-value="(value) => updateConstraint(index, 'weight', parseFloat(value || '0'))"
-              >
-                <template v-slot:prepend>
-                  <v-icon size="small">mdi-weight</v-icon>
-                </template>
-              </v-text-field>
-            </v-col>
+              ></v-text-field>
+            </td>
 
             <!-- Delete button -->
-            <v-col cols="12" sm="2" class="text-right">
+            <td class="text-center">
               <v-btn
                 icon="mdi-delete"
-                size="small"
+                size="x-small"
                 color="error"
                 variant="text"
                 @click="removeConstraint(index)"
               ></v-btn>
-            </v-col>
-          </v-row>
-
-          <!-- Constraint type description -->
-          <div class="text-caption text-grey mt-2">
-            {{ getConstraintDescription(constraint.type) }}
-          </div>
-        </v-list-item>
-      </v-list>
+            </td>
+          </tr>
+        </tbody>
+      </v-table>
 
       <!-- Validation messages -->
       <v-alert
@@ -197,11 +204,46 @@ function getConstraintDescription(type: ConstraintType): string {
 </script>
 
 <style scoped>
-.constraint-item {
+.constraints-table {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+}
+
+.constraints-table :deep(thead) {
   background-color: #fafafa;
 }
 
-.border {
-  border: 1px solid #e0e0e0;
+.constraints-table :deep(th) {
+  font-weight: 600;
+  padding: 8px 12px !important;
+  white-space: nowrap;
+}
+
+.constraints-table :deep(td) {
+  padding: 4px 12px !important;
+  vertical-align: middle;
+}
+
+.weight-column {
+  width: 120px;
+}
+
+.actions-column {
+  width: 60px;
+}
+
+.constraint-row:hover {
+  background-color: #f5f5f5;
+}
+
+/* Make form fields more compact within table cells */
+.constraints-table :deep(.v-field) {
+  font-size: 0.875rem;
+}
+
+.constraints-table :deep(.v-field__input) {
+  min-height: 32px;
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 </style>
