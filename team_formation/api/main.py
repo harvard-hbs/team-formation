@@ -3,12 +3,16 @@
 import asyncio
 import json
 import logging
+import os
+from pathlib import Path
 from typing import Any, Dict
 
 import numpy as np
 import pandas as pd
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from sse_starlette.sse import EventSourceResponse
 
 from team_formation.team_assignment import TeamAssignment
@@ -21,8 +25,15 @@ from team_formation.api.models import (
 )
 
 # Configure logging
-logging.basicConfig(level=logging.WARNING)
+log_level = os.getenv("LOG_LEVEL", "WARNING").upper()
+logging.basicConfig(
+    level=getattr(logging, log_level, logging.WARNING),
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
+
+# Check if running in production mode
+IS_PRODUCTION = os.getenv("PRODUCTION", "false").lower() == "true"
 
 # Create FastAPI app
 app = FastAPI(
@@ -31,10 +42,23 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# Add CORS middleware to allow cross-origin requests
+# Configure CORS based on environment
+if IS_PRODUCTION:
+    # In production, use specific origins from environment variable
+    allowed_origins = os.getenv("CORS_ORIGINS", "").split(",")
+    allowed_origins = [origin.strip() for origin in allowed_origins if origin.strip()]
+
+    if not allowed_origins:
+        # If no CORS_ORIGINS set, allow same-origin only (container serving static files)
+        allowed_origins = ["*"]
+        logger.warning("No CORS_ORIGINS set, allowing all origins. Set CORS_ORIGINS for production.")
+else:
+    # Development: allow localhost
+    allowed_origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify allowed origins
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -129,8 +153,15 @@ async def run_team_assignment_async(
     Raises:
         Exception: If team assignment fails
     """
+    logger.info(
+        f"Starting team assignment: {len(request.participants)} participants, "
+        f"{len(request.constraints)} constraints, max_time={request.max_time}s"
+    )
+
     # Convert request to DataFrames
     participants_df, constraints_df = convert_request_to_dataframes(request)
+    logger.debug(f"Converted to DataFrames: participants shape={participants_df.shape}, "
+                 f"constraints shape={constraints_df.shape}")
 
     # Create TeamAssignment instance
     ta = TeamAssignment(
@@ -139,6 +170,7 @@ async def run_team_assignment_async(
         target_team_size=request.target_team_size,
         less_than_target=request.less_than_target,
     )
+    logger.info(f"Created TeamAssignment instance, target_team_size={request.target_team_size}")
 
     # Create SSE callback
     callback = SSESolutionCallback(
@@ -146,15 +178,24 @@ async def run_team_assignment_async(
         loop=loop,
         stop_after_seconds=request.max_time,
     )
+    logger.info(f"Created SSE callback with {request.max_time}s timeout")
 
     # Run solver in thread pool to avoid blocking
     def run_solver():
         """Run the solver synchronously."""
-        ta.solve(solution_callback=callback)
+        logger.info("Starting CP-SAT solver...")
+        ta.solve(
+            solution_callback=callback,
+            max_time_in_seconds=request.max_time,
+            log_progress=log_level == "DEBUG"
+        )
+        logger.info("Solver completed")
         return ta
 
     # Execute solver in thread pool
+    logger.info("Launching solver in thread pool...")
     ta_result = await asyncio.to_thread(run_solver)
+    logger.info(f"Solver thread completed, solution_found={ta_result.solution_found}")
 
     # Check if solution was found
     if not ta_result.solution_found:
@@ -241,7 +282,7 @@ async def event_generator(request: TeamAssignmentRequest):
 
 
 @app.post(
-    "/assign_teams",
+    "/api/assign_teams",
     response_class=EventSourceResponse,
     responses={
         200: {
@@ -276,7 +317,7 @@ async def assign_teams(request: TeamAssignmentRequest) -> EventSourceResponse:
     ## Example Usage
 
     ```javascript
-    const eventSource = new EventSource('/assign_teams', {
+    const eventSource = new EventSource('/api/assign_teams', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -314,14 +355,15 @@ async def assign_teams(request: TeamAssignmentRequest) -> EventSourceResponse:
     return EventSourceResponse(event_generator(request))
 
 
-@app.get("/")
-async def root():
-    """Root endpoint with API information."""
+@app.get("/api")
+async def api_info():
+    """API information endpoint."""
     return {
         "name": "Team Formation API",
         "version": "1.0.0",
         "endpoints": {
-            "assign_teams": "/assign_teams (POST)",
+            "assign_teams": "/api/assign_teams (POST)",
+            "health": "/health",
             "docs": "/docs",
         },
     }
@@ -331,6 +373,58 @@ async def root():
 async def health():
     """Health check endpoint."""
     return {"status": "healthy"}
+
+
+# Static file serving for Vue.js frontend (production mode)
+# Determine static files directory
+STATIC_DIR = Path(__file__).parent.parent.parent / "ui" / "dist"
+
+if IS_PRODUCTION and STATIC_DIR.exists():
+    # Mount static assets (CSS, JS, images)
+    app.mount("/assets", StaticFiles(directory=STATIC_DIR / "assets"), name="assets")
+
+    @app.get("/")
+    async def serve_frontend():
+        """Serve the Vue.js frontend."""
+        index_file = STATIC_DIR / "index.html"
+        if index_file.exists():
+            return FileResponse(index_file)
+        return {"message": "Frontend not found. Build the UI first: cd ui && npm run build"}
+
+    # Catch-all route for Vue.js client-side routing
+    @app.get("/{full_path:path}")
+    async def serve_frontend_routes(full_path: str):
+        """Serve Vue.js routes (for client-side routing)."""
+        # Don't catch API routes
+        if full_path.startswith("api/") or full_path.startswith("docs") or full_path.startswith("health"):
+            raise HTTPException(status_code=404, detail="Not found")
+
+        # Try to serve the requested file
+        file_path = STATIC_DIR / full_path
+        if file_path.exists() and file_path.is_file():
+            return FileResponse(file_path)
+
+        # Otherwise serve index.html for client-side routing
+        index_file = STATIC_DIR / "index.html"
+        if index_file.exists():
+            return FileResponse(index_file)
+
+        return {"message": "Frontend not found. Build the UI first: cd ui && npm run build"}
+else:
+    @app.get("/")
+    async def root():
+        """Root endpoint with API information (development mode)."""
+        return {
+            "name": "Team Formation API",
+            "version": "1.0.0",
+            "mode": "development",
+            "message": "Frontend should be served separately in development mode (npm run dev)",
+            "endpoints": {
+                "assign_teams": "/api/assign_teams (POST)",
+                "health": "/health",
+                "docs": "/docs",
+            },
+        }
 
 
 def run():

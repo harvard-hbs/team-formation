@@ -21,7 +21,7 @@ export interface AssignTeamsCallbacks {
 let currentController: AbortController | null = null
 
 /**
- * Call the /assign_teams endpoint with SSE streaming
+ * Call the /api/assign_teams endpoint with SSE streaming
  */
 export async function assignTeams(
   request: TeamAssignmentRequest,
@@ -35,7 +35,7 @@ export async function assignTeams(
   currentController = new AbortController()
 
   try {
-    await fetchEventSource(`${API_BASE_URL}/assign_teams`, {
+    await fetchEventSource(`${API_BASE_URL}/api/assign_teams`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -158,7 +158,7 @@ export async function checkHealth(): Promise<boolean> {
  */
 export async function getApiInfo(): Promise<any> {
   try {
-    const response = await fetch(`${API_BASE_URL}/`)
+    const response = await fetch(`${API_BASE_URL}/api`)
     if (!response.ok) {
       throw new Error('Failed to get API info')
     }

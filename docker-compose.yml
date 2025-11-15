@@ -1,0 +1,40 @@
+# Docker Compose configuration for Team Formation application
+# This file is primarily for local testing of the containerized application
+
+version: '3.8'
+
+services:
+  team-formation:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: team-formation:latest
+    container_name: team-formation-app
+    ports:
+      - "8000:8000"
+    environment:
+      # Set production mode to enable static file serving
+      - PRODUCTION=true
+      # Optional: Specify allowed CORS origins (comma-separated)
+      # - CORS_ORIGINS=https://example.com,https://app.example.com
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+
+  # Development configuration (optional)
+  # Uncomment to run backend and frontend separately for development
+  # team-formation-dev:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8000:8000"
+  #   environment:
+  #     - PRODUCTION=false
+  #   volumes:
+  #     - ./team_formation:/app/team_formation
+  #   command: ["uvicorn", "team_formation.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

@@ -28,13 +28,13 @@ uvicorn team_formation.api.main:app --reload --host 0.0.0.0 --port 8000
 
 ## API Endpoints
 
-### `GET /`
+### `GET /api`
 Root endpoint with API information.
 
 ### `GET /health`
 Health check endpoint.
 
-### `POST /assign_teams`
+### `POST /api/assign_teams`
 Assign participants to teams based on weighted constraints. Returns a stream of Server-Sent Events (SSE) with progress updates and final results.
 
 ## Usage Example
@@ -93,7 +93,7 @@ Assign participants to teams based on weighted constraints. Returns a stream of 
 ### Using with JavaScript/TypeScript
 
 ```javascript
-const response = await fetch('http://localhost:8000/assign_teams', {
+const response = await fetch('http://localhost:8000/api/assign_teams', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -145,7 +145,7 @@ while (true) {
 import requests
 import json
 
-url = "http://localhost:8000/assign_teams"
+url = "http://localhost:8000/api/assign_teams"
 payload = {
     "participants": [...],
     "constraints": [...],
@@ -177,7 +177,7 @@ with requests.post(url, json=payload, stream=True) as response:
 ### Using with curl
 
 ```bash
-curl -N -X POST http://localhost:8000/assign_teams \
+curl -N -X POST http://localhost:8000/api/assign_teams \
   -H "Content-Type: application/json" \
   -d '{
     "participants": [
@@ -266,7 +266,7 @@ uv run pytest tests/test_api.py -v
 
 The API implementation consists of:
 
-- **`main.py`** - FastAPI application and `/assign_teams` endpoint
+- **`main.py`** - FastAPI application and `/api/assign_teams` endpoint with static file serving
 - **`models.py`** - Pydantic request/response models with validation
 - **`callbacks.py`** - SSE solution callback for progress streaming
 
@@ -276,18 +276,37 @@ The implementation uses:
 - `asyncio.Queue` for thread-safe event communication between the solver thread and FastAPI
 - `asyncio.to_thread()` to run the CP-SAT solver without blocking the event loop
 
+### Production Mode
+
+When `PRODUCTION=true` environment variable is set, the API serves:
+- API endpoints at `/api/*`
+- Static Vue.js frontend files at `/*`
+
+In development mode (`PRODUCTION=false` or unset), only the API endpoints are served.
+
 ## Deployment
+
+### Docker (Recommended)
+
+See the main [README.md](../../README.md#docker-deployment) for Docker deployment instructions.
+
+### Manual Deployment
 
 For production deployment, use a production ASGI server:
 
 ```bash
+# Set production mode
+export PRODUCTION=true
+
+# Run with uvicorn
 uvicorn team_formation.api.main:app --host 0.0.0.0 --port 8000 --workers 4
 ```
 
 Or with gunicorn:
 
 ```bash
+export PRODUCTION=true
 gunicorn team_formation.api.main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
 ```
 
-**Note**: Update the CORS middleware in `main.py` to specify allowed origins for production use.
+**Note**: Configure CORS origins using the `CORS_ORIGINS` environment variable (comma-separated list) for production use.

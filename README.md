@@ -37,8 +37,9 @@ The API server will start on `http://localhost:8000` by default.
 
 ### API Endpoints
 
-- `POST /assign_teams` - Create team assignments with real-time progress streaming via SSE
-- `GET /` - API information and health check
+- `POST /api/assign_teams` - Create team assignments with real-time progress streaming via SSE
+- `GET /api` - API information
+- `GET /health` - Health check
 
 ### Features
 
@@ -48,6 +49,128 @@ The API server will start on `http://localhost:8000` by default.
 - Full OpenAPI/Swagger documentation at `/docs`
 
 For detailed API documentation, examples, and usage instructions, see [team_formation/api/README.md](team_formation/api/README.md).
+
+## Docker Deployment
+
+The application can be deployed as a single Docker container that includes both the FastAPI backend and the Vue.js frontend. This is the recommended approach for production deployments.
+
+### Quick Start
+
+Build and run the containerized application:
+
+```bash
+# Build the Docker image
+docker build -t team-formation:latest .
+
+# Run the container
+docker run -p 8000:8000 -e PRODUCTION=true team-formation:latest
+```
+
+The application will be available at `http://localhost:8000`
+
+### Using Docker Compose
+
+For easier management, use Docker Compose:
+
+```bash
+# Start the application
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop the application
+docker-compose down
+```
+
+### Environment Variables
+
+Configure the container using environment variables:
+
+- `PRODUCTION` - Set to `true` to enable production mode (required for static file serving)
+- `CORS_ORIGINS` - Comma-separated list of allowed CORS origins (optional)
+- `PORT` - Port to run the server on (default: 8000)
+- `LOG_LEVEL` - Logging level (default: warning)
+
+Example with custom configuration:
+
+```bash
+docker run -p 8000:8000 \
+  -e PRODUCTION=true \
+  -e CORS_ORIGINS="https://example.com,https://app.example.com" \
+  team-formation:latest
+```
+
+### Cloud Platform Deployment
+
+The Docker image can be deployed to various cloud platforms:
+
+#### Google Cloud Run
+
+```bash
+# Build and push to Google Container Registry
+gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/team-formation
+
+# Deploy to Cloud Run
+gcloud run deploy team-formation \
+  --image gcr.io/YOUR_PROJECT_ID/team-formation \
+  --platform managed \
+  --region us-central1 \
+  --allow-unauthenticated \
+  --set-env-vars PRODUCTION=true
+```
+
+#### AWS ECS/Fargate
+
+```bash
+# Build and push to Amazon ECR
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin YOUR_ACCOUNT.dkr.ecr.us-east-1.amazonaws.com
+docker build -t team-formation .
+docker tag team-formation:latest YOUR_ACCOUNT.dkr.ecr.us-east-1.amazonaws.com/team-formation:latest
+docker push YOUR_ACCOUNT.dkr.ecr.us-east-1.amazonaws.com/team-formation:latest
+
+# Deploy using ECS task definition with PRODUCTION=true environment variable
+```
+
+#### Azure Container Instances
+
+```bash
+# Build and push to Azure Container Registry
+az acr build --registry YOUR_REGISTRY --image team-formation:latest .
+
+# Deploy to Azure Container Instances
+az container create \
+  --resource-group YOUR_RESOURCE_GROUP \
+  --name team-formation \
+  --image YOUR_REGISTRY.azurecr.io/team-formation:latest \
+  --dns-name-label team-formation \
+  --ports 8000 \
+  --environment-variables PRODUCTION=true
+```
+
+### Container Architecture
+
+The Docker image uses a multi-stage build process:
+
+1. **Frontend Build Stage**: Builds the Vue.js frontend using Node.js
+2. **Python Stage**: Installs Python dependencies and the team-formation package
+3. **Final Image**: Combines the built frontend with the Python backend in a slim production image
+
+The FastAPI application serves both:
+- API endpoints at `/api/*` (including SSE streaming at `/api/assign_teams`)
+- Static frontend files at `/*` (Vue.js SPA)
+
+### Health Checks
+
+The container includes a health check endpoint at `/health` that can be used for:
+- Docker health checks
+- Kubernetes liveness/readiness probes
+- Load balancer health checks
+
+```bash
+curl http://localhost:8000/health
+# Returns: {"status": "healthy"}
+```
 
 ## Development
 
