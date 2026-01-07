@@ -186,21 +186,6 @@ function isAttributeValid(attribute: string): boolean {
 function getAttributeError(attribute: string): string {
   return isAttributeValid(attribute) ? '' : 'Attribute not found in data'
 }
-
-function getConstraintDescription(type: ConstraintType): string {
-  switch (type) {
-    case 'cluster':
-      return 'Group participants with shared discrete attribute values together in teams'
-    case 'cluster_numeric':
-      return 'Minimize numeric attribute ranges within teams (e.g., similar experience levels)'
-    case 'different':
-      return 'Ensure teams don\'t share specific attribute values (e.g., no two people from same department)'
-    case 'diversify':
-      return 'Match team attribute distributions to overall population (e.g., gender balance)'
-    default:
-      return ''
-  }
-}
 </script>
 
 <style scoped>
