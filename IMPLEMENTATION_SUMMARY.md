@@ -167,6 +167,66 @@ Extended existing `SolutionCallback` class to:
 - Connection errors handled gracefully
 - Timeouts enforced via `max_time` parameter
 
+## Session State and Statefulness
+
+### Backend (FastAPI)
+
+The backend is **fully stateless**. Each request to `/api/assign_teams` is self-contained:
+- Participants and constraints are sent in the request body
+- Solver runs in a thread pool, with state local to that thread
+- Results stream back via SSE and are returned in the response
+- No database, no server-side sessions, no shared state between requests
+
+Key statelessness indicators:
+- No database connections
+- No server-side session management
+- Solver state managed per-thread via `SSESolutionCallback`
+- All critical state returned in response or maintained client-side
+- Uses Server-Sent Events for real-time updates without maintaining connection state
+
+### Frontend (Vue.js)
+
+All persistent state lives client-side:
+- **Pinia store** holds participants, constraints, and results in memory
+- **localStorage** stores only constraint presets (user-saved configurations)
+- State resets when the browser tab closes (except presets)
+
+## AWS ECS Fargate Compatibility
+
+This application is **fully compatible with ECS Fargate** deployment.
+
+### Compatibility Checklist
+
+| Requirement | Status |
+|-------------|--------|
+| Stateless containers | ✅ No server-side session state |
+| Horizontal scaling | ✅ Can run multiple tasks behind ALB |
+| No sticky sessions needed | ✅ Any instance can handle any request |
+| No shared filesystem | ✅ No persistent storage requirements |
+| Health checks | ✅ `/health` endpoint available |
+
+### SSE Connection Considerations
+
+SSE connections are long-lived during solver execution. When using an Application Load Balancer:
+- Set the idle timeout appropriately (default 60s may be too short for complex solving jobs)
+- Each SSE stream stays on one container until complete, but this is fine since the connection carries its own state
+
+### Recommended Task Definition Settings
+
+```yaml
+# Example task definition considerations
+cpu: 512-2048      # Solver is CPU-intensive
+memory: 1024-4096  # Depends on participant count
+port: 8000         # Single port for API + frontend
+```
+
+### Deployment Notes
+
+- The Docker container serves both API (`/api/*`) and frontend (`/*`) from a single service
+- No session affinity or sticky sessions required
+- Can scale horizontally without coordination between instances
+- Compatible with other container platforms: GCP Cloud Run, Azure Container Apps
+
 ## Usage
 
 ### Start the Server

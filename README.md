@@ -380,4 +380,7 @@ For a detailed log of changes see [CHANGELOG.md](CHANGELOG.md).
 - [x] Go through `create_numeric_clustering_costs` to look for simplifications.
 - [ ] Keep track of costs by team and attribute for better introspection.
 - [ ] Consider implementing framework for adding new constraint types.
-- [ ] Add documentation for new constraint types.
+- [x] Add documentation for new constraint types.
+- [ ] Incorporate CHANGELOG.md changes from `team-formation-release` repo.
+- [ ] Consider incorporting ECS deployment changes from `team-formation-deploy` repo.
+- [ ] Evaluate `team-formation-claude` repo for usefullness of visualization experiments.
