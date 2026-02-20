@@ -9,7 +9,8 @@ import type {
   AppState,
   CohortInfo,
   TeamSummary,
-  ValidationResult
+  ValidationResult,
+  DifferentConstraintEvaluation
 } from '@/types'
 import { AppState as AppStateEnum } from '@/types'
 
@@ -112,6 +113,44 @@ export const useTeamFormationStore = defineStore('teamFormation', () => {
         members
       }))
       .sort((a, b) => a.team_number - b.team_number)
+  })
+
+  // Evaluate "different" constraints - calculate how many participants share values per team
+  // missed = team_size - unique_values = number of participants sharing a value with another
+  const differentConstraintEvaluations = computed<DifferentConstraintEvaluation[]>(() => {
+    if (!results.value || constraints.value.length === 0) return []
+
+    // Get only "different" type constraints
+    const differentConstraints = constraints.value.filter(c => c.type === "different")
+    if (differentConstraints.length === 0) return []
+
+    // Group participants by team
+    const teamGroups = new Map<number, Participant[]>()
+    results.value.forEach(p => {
+      if (p.team_number !== undefined) {
+        if (!teamGroups.has(p.team_number)) {
+          teamGroups.set(p.team_number, [])
+        }
+        teamGroups.get(p.team_number)!.push(p)
+      }
+    })
+
+    // For each "different" constraint, calculate missed per team
+    return differentConstraints.map(constraint => ({
+      attribute: constraint.attribute,
+      teams: Array.from(teamGroups.entries())
+        .map(([teamNum, members]) => {
+          const values = members.map(m => m[constraint.attribute])
+          const uniqueCount = new Set(values).size
+          const missed = members.length - uniqueCount
+          return {
+            team_number: teamNum,
+            team_size: members.length,
+            missed
+          }
+        })
+        .sort((a, b) => a.team_number - b.team_number)
+    }))
   })
 
   // ===== Actions =====
@@ -307,6 +346,7 @@ export const useTeamFormationStore = defineStore('teamFormation', () => {
     canRunAssignment,
     cohortInfo,
     teamSummaries,
+    differentConstraintEvaluations,
 
     // Actions
     loadParticipants,

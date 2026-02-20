@@ -21,6 +21,9 @@
         </v-col>
       </v-row>
 
+      <!-- Different constraint sameness visualization -->
+      <DifferentConstraintVisualization />
+
       <!-- Attribute distribution (for constrained attributes) -->
       <v-row v-if="store.constraints.length > 0">
         <v-col
@@ -63,6 +66,7 @@ import {
   ArcElement
 } from 'chart.js'
 import { useTeamFormationStore } from '@/stores/teamFormation'
+import DifferentConstraintVisualization from './DifferentConstraintVisualization.vue'
 
 // Register Chart.js components
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ArcElement)

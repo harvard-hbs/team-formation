@@ -665,7 +665,7 @@ class TeamAssignment:
             self.solver.parameters.log_to_stdout = True
         # This alternative is for establishing a callback for interrupting before
         # an optimal solution is found.
-        self.status = self.solver.Solve(self.model, solution_callback=solution_callback)
+        self.status = self.solver.Solve(self.model, solution_callback)
         self.solution_found = (self.status == cp_model.OPTIMAL) or (
             self.status == cp_model.FEASIBLE
         )

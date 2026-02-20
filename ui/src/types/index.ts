@@ -97,3 +97,16 @@ export interface CohortInfo {
   num_teams?: number
   last_updated?: string
 }
+
+// Different constraint evaluation for a single team
+export interface DifferentConstraintTeamEval {
+  team_number: number
+  team_size: number
+  missed: number  // team_size - unique_values = number sharing a value
+}
+
+// Different constraint evaluation for all teams
+export interface DifferentConstraintEvaluation {
+  attribute: string
+  teams: DifferentConstraintTeamEval[]
+}
