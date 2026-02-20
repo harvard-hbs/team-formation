@@ -16,10 +16,6 @@ jobs:
             platform: mac
             arch: arm64
             python-arch: arm64
-          - os: macos-13
-            platform: mac
-            arch: x64
-            python-arch: x64
           - os: windows-latest
             platform: win
             arch: x64
