@@ -120,7 +120,7 @@ jobs:
       - name: Build Electron app
         working-directory: desktop
         shell: bash
-        run: npx electron-builder --${{ matrix.platform }} --${{ matrix.arch }}
+        run: npx electron-builder --${{ matrix.platform }} --${{ matrix.arch }} --publish never
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # macOS code signing (configure secrets when ready)

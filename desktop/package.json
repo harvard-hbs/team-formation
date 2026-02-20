@@ -4,6 +4,10 @@
   "description": "Desktop application for constraint-based team formation",
   "author": "Brent Benson <bbenson@hbs.edu>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harvard-hbs/team-formation.git"
+  },
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "tsc && electron .",
