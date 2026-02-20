@@ -1,0 +1,7 @@
+node_modules/
+dist-electron/
+python-dist/
+build/
+dist/
+release/
+*.js.map

@@ -1,0 +1,26 @@
+{
+  "name": "team-formation-desktop",
+  "version": "1.6.1",
+  "description": "Desktop application for constraint-based team formation",
+  "author": "Brent Benson <bbenson@hbs.edu>",
+  "license": "MIT",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "tsc && electron .",
+    "build": "tsc",
+    "pack": "tsc && electron-builder --dir",
+    "dist": "tsc && electron-builder",
+    "dist:mac": "tsc && electron-builder --mac",
+    "dist:win": "tsc && electron-builder --win",
+    "dist:linux": "tsc && electron-builder --linux"
+  },
+  "dependencies": {
+    "get-port": "^7.1.0"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "typescript": "^5.7.2",
+    "@types/node": "^22.10.1"
+  }
+}

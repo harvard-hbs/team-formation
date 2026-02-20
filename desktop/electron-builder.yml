@@ -1,0 +1,73 @@
+appId: edu.hbs.team-formation
+productName: Team Formation
+copyright: Copyright © 2024 Harvard Business School
+
+directories:
+  output: release
+  buildResources: resources
+
+files:
+  - dist-electron/**/*
+  - "!node_modules"
+
+extraResources:
+  # PyInstaller-bundled backend
+  - from: python-dist/
+    to: python-dist
+    filter:
+      - "**/*"
+  # Pre-built Vue.js frontend
+  - from: ../ui/dist/
+    to: ui-dist
+    filter:
+      - "**/*"
+
+mac:
+  category: public.app-category.productivity
+  target:
+    - target: dmg
+      arch:
+        - arm64
+        - x64
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: resources/entitlements.mac.plist
+  entitlementsInherit: resources/entitlements.mac.plist
+  # Uncomment and configure for code signing:
+  # identity: "Developer ID Application: Your Name (TEAM_ID)"
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  # Uncomment and configure for code signing:
+  # certificateFile: path/to/certificate.pfx
+  # certificatePassword: ""
+
+linux:
+  target:
+    - target: AppImage
+      arch:
+        - x64
+  category: Utility
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+
+dmg:
+  contents:
+    - x: 130
+      y: 220
+    - x: 410
+      y: 220
+      type: link
+      path: /Applications
+
+# Auto-update configuration (uncomment when ready)
+# publish:
+#   provider: github
+#   owner: harvard-hbs
+#   repo: team-formation

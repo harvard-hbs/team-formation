@@ -7,7 +7,7 @@ import type {
 } from '@/types'
 
 // Get API base URL from environment or default
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+const API_BASE_URL = (window as any).__API_BASE_URL__ || import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
 // Callbacks for SSE events
 export interface AssignTeamsCallbacks {

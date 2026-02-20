@@ -43,10 +43,14 @@ app = FastAPI(
 )
 
 # Configure CORS based on environment
-if IS_PRODUCTION:
+cors_origins_env = os.getenv("CORS_ORIGINS", "")
+
+if cors_origins_env == "*":
+    # Allow all origins (used by Electron desktop app where renderer uses file:// origin)
+    allowed_origins = ["*"]
+elif IS_PRODUCTION:
     # In production, use specific origins from environment variable
-    allowed_origins = os.getenv("CORS_ORIGINS", "").split(",")
-    allowed_origins = [origin.strip() for origin in allowed_origins if origin.strip()]
+    allowed_origins = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
 
     if not allowed_origins:
         # If no CORS_ORIGINS set, allow same-origin only (container serving static files)
@@ -431,10 +435,12 @@ def run():
     """Run the FastAPI server with uvicorn."""
     import uvicorn
 
+    port = int(os.getenv("PORT", "8000"))
+
     uvicorn.run(
         "team_formation.api.main:app",
         host="0.0.0.0",
-        port=8000,
+        port=port,
         reload=True,
         log_level="warning",
     )
