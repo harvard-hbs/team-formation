@@ -1,0 +1,172 @@
+name: Desktop Build
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            platform: mac
+            arch: arm64
+            python-arch: arm64
+          - os: macos-13
+            platform: mac
+            arch: x64
+            python-arch: x64
+          - os: windows-latest
+            platform: win
+            arch: x64
+            python-arch: x64
+          - os: ubuntu-latest
+            platform: linux
+            arch: x64
+            python-arch: x64
+
+    runs-on: ${{ matrix.os }}
+    name: Build (${{ matrix.platform }}-${{ matrix.arch }})
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -e .
+          pip install pyinstaller
+
+      - name: Build Vue.js frontend
+        working-directory: ui
+        run: |
+          npm ci
+          npm run build
+
+      - name: Bundle Python backend (macOS/Linux)
+        if: runner.os != 'Windows'
+        working-directory: desktop
+        run: pyinstaller team_formation_api.spec --noconfirm
+
+      - name: Bundle Python backend (Windows)
+        if: runner.os == 'Windows'
+        working-directory: desktop
+        run: pyinstaller team_formation_api.spec --noconfirm
+
+      - name: Move PyInstaller output to python-dist
+        shell: bash
+        working-directory: desktop
+        run: mv dist/team_formation_api python-dist
+
+      - name: Smoke test bundled backend (macOS/Linux)
+        if: runner.os != 'Windows'
+        working-directory: desktop
+        run: |
+          PORT=9300 ./python-dist/team_formation_api &
+          BACKEND_PID=$!
+          for i in $(seq 1 20); do
+            sleep 1
+            if curl -sf http://127.0.0.1:9300/health > /dev/null 2>&1; then
+              echo "Health check passed on attempt $i"
+              kill $BACKEND_PID
+              exit 0
+            fi
+          done
+          echo "Backend failed to start"
+          kill $BACKEND_PID 2>/dev/null || true
+          exit 1
+
+      - name: Smoke test bundled backend (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        working-directory: desktop
+        run: |
+          $env:PORT = "9300"
+          $proc = Start-Process -FilePath "python-dist\team_formation_api.exe" -PassThru -NoNewWindow
+          for ($i = 1; $i -le 20; $i++) {
+            Start-Sleep -Seconds 1
+            try {
+              $resp = Invoke-WebRequest -Uri "http://127.0.0.1:9300/health" -UseBasicParsing -TimeoutSec 2
+              if ($resp.StatusCode -eq 200) {
+                Write-Host "Health check passed on attempt $i"
+                Stop-Process -Id $proc.Id -Force
+                exit 0
+              }
+            } catch {}
+          }
+          Write-Host "Backend failed to start"
+          Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
+          exit 1
+
+      - name: Install Electron dependencies
+        working-directory: desktop
+        run: npm ci
+
+      - name: Build Electron app
+        working-directory: desktop
+        shell: bash
+        run: npx electron-builder --${{ matrix.platform }} --${{ matrix.arch }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # macOS code signing (configure secrets when ready)
+          # CSC_LINK: ${{ secrets.MAC_CERTIFICATE }}
+          # CSC_KEY_PASSWORD: ${{ secrets.MAC_CERTIFICATE_PASSWORD }}
+          # APPLE_ID: ${{ secrets.APPLE_ID }}
+          # APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          # APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-${{ matrix.platform }}-${{ matrix.arch }}
+          path: |
+            desktop/release/*.dmg
+            desktop/release/*.exe
+            desktop/release/*.AppImage
+            desktop/release/*.yml
+            desktop/release/*.blockmap
+          if-no-files-found: error
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: List artifacts
+        run: find artifacts -type f | sort
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          generate_release_notes: true
+          files: |
+            artifacts/*.dmg
+            artifacts/*.exe
+            artifacts/*.AppImage
+            artifacts/*.yml
+            artifacts/*.blockmap
