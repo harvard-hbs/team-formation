@@ -1,5 +1,25 @@
 # Change Log
 
+## [2.0.0] - 2026-02-20
+
+### Added
+
+- **Electron desktop application** for standalone distribution without Docker or Python
+  - PyInstaller-bundled FastAPI backend with Google OR-Tools
+  - Electron shell with automatic backend lifecycle management (spawn, health check, shutdown)
+  - Platform installers: macOS DMG, Windows NSIS installer, Linux AppImage
+- **GitHub Actions CI pipeline** for cross-platform desktop builds
+  - Matrix builds for macOS (ARM), Windows (x64), and Linux (x64)
+  - Automated smoke testing of bundled backend in CI
+  - Draft GitHub Releases with installer artifacts on version tags
+
+### Modified
+
+- FastAPI server now reads `PORT` from environment variable (defaults to 8000)
+- CORS configuration supports `CORS_ORIGINS=*` for desktop app's `file://` origin
+- Server detects PyInstaller bundle mode for correct uvicorn startup
+- Frontend API URL can be injected via `window.__API_BASE_URL__` for Electron
+
 ## [1.6.1] - 2026-01-07
 
 - Small code fix
