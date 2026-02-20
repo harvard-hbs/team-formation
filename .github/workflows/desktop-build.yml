@@ -117,6 +117,10 @@ jobs:
         working-directory: desktop
         run: npm ci
 
+      - name: Compile Electron TypeScript
+        working-directory: desktop
+        run: npx tsc
+
       - name: Build Electron app
         working-directory: desktop
         shell: bash
