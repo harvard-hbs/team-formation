@@ -4,6 +4,7 @@ import asyncio
 import json
 import logging
 import os
+import sys
 from pathlib import Path
 from typing import Any, Dict
 
@@ -379,11 +380,18 @@ async def health():
     return {"status": "healthy"}
 
 
-# Static file serving for Vue.js frontend (production mode)
-# Determine static files directory
-STATIC_DIR = Path(__file__).parent.parent.parent / "ui" / "dist"
+# Static file serving for Vue.js frontend (production/desktop mode)
+# Determine static files directory based on environment
+_static_dir_env = os.getenv("STATIC_DIR", "")
+if _static_dir_env:
+    # Explicit path from environment (set by Electron)
+    STATIC_DIR = Path(_static_dir_env)
+else:
+    STATIC_DIR = Path(__file__).parent.parent.parent / "ui" / "dist"
 
-if IS_PRODUCTION and STATIC_DIR.exists():
+SERVE_FRONTEND = (IS_PRODUCTION or getattr(sys, "frozen", False)) and STATIC_DIR.exists()
+
+if SERVE_FRONTEND:
     # Mount static assets (CSS, JS, images)
     app.mount("/assets", StaticFiles(directory=STATIC_DIR / "assets"), name="assets")
 
@@ -436,14 +444,25 @@ def run():
     import uvicorn
 
     port = int(os.getenv("PORT", "8000"))
+    is_bundled = getattr(sys, "frozen", False)
 
-    uvicorn.run(
-        "team_formation.api.main:app",
-        host="0.0.0.0",
-        port=port,
-        reload=True,
-        log_level="warning",
-    )
+    if is_bundled:
+        # PyInstaller bundle: pass the app object directly (string import won't resolve)
+        # and disable reload (no source files to watch)
+        uvicorn.run(
+            app,
+            host="127.0.0.1",
+            port=port,
+            log_level="warning",
+        )
+    else:
+        uvicorn.run(
+            "team_formation.api.main:app",
+            host="0.0.0.0",
+            port=port,
+            reload=True,
+            log_level="warning",
+        )
 
 
 if __name__ == "__main__":

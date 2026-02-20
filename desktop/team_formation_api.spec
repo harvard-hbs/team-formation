@@ -28,7 +28,11 @@ a = Analysis(
     ["../team_formation/api/main.py"],
     pathex=[os.path.abspath("..")],
     binaries=ortools_binaries,
-    datas=ortools_datas,
+    datas=[
+        *ortools_datas,
+        # Include the version file required by team_formation/__init__.py
+        ("../team_formation/_version.txt", "team_formation"),
+    ],
     hiddenimports=[
         # ortools and its native extensions
         *ortools_hiddenimports,

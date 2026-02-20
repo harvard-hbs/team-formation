@@ -65,7 +65,8 @@ function startBackend(port: number): Promise<void> {
         ...process.env,
         PORT: String(port),
         CORS_ORIGINS: "*",
-        PRODUCTION: "false",
+        PRODUCTION: "true",
+        STATIC_DIR: getFrontendPath(),
         LOG_LEVEL: "WARNING",
       },
       stdio: ["ignore", "pipe", "pipe"],
@@ -161,11 +162,11 @@ function createWindow(): void {
     },
   });
 
-  const frontendPath = getFrontendPath();
-  const indexPath = path.join(frontendPath, "index.html");
-
-  console.log(`Loading frontend from: ${indexPath}`);
-  mainWindow.loadFile(indexPath);
+  // Load the frontend from the backend server (which serves static files).
+  // This avoids file:// path issues with Vite's absolute asset paths.
+  const url = `http://127.0.0.1:${backendPort}`;
+  console.log(`Loading frontend from: ${url}`);
+  mainWindow.loadURL(url);
 
   mainWindow.on("closed", () => {
     mainWindow = null;
