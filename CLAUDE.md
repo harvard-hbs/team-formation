@@ -10,6 +10,7 @@ This is a Python package for constraint-based team formation that uses Google OR
 - **FastAPI REST API** with Server-Sent Events for real-time progress streaming
 - **Vue.js Web Application** with Vuetify Material Design UI
 - **Streamlit UI** for quick interactive use
+- **Electron Desktop App** for macOS, Windows, and Linux
 - **Docker deployment** combining frontend and backend in a single container
 
 ## Common Development Commands
@@ -193,6 +194,83 @@ The Vue.js frontend communicates with the FastAPI backend via Server-Sent Events
 - `POST /api/assign_teams` - Main solver endpoint with SSE response
 - `GET /health` - Health check
 - `GET /api` - API information
+
+### Desktop Application (Electron)
+
+The project includes an Electron-based desktop application (`desktop/`) that bundles the FastAPI backend and Vue.js frontend into native installers for macOS, Windows, and Linux.
+
+**Tech Stack:**
+- **Electron** with TypeScript for the native shell
+- **PyInstaller** to bundle the Python/FastAPI backend as a standalone executable
+- **electron-builder** for packaging platform-specific installers
+
+**Directory Structure:**
+```
+desktop/
+  electron/               # TypeScript source (main.ts, preload.ts)
+  dist-electron/          # Compiled Electron JavaScript
+  resources/              # Icons and macOS entitlements
+  python-dist/            # PyInstaller-bundled backend (generated)
+  release/                # Final installers (generated)
+  electron-builder.yml    # electron-builder configuration
+  package.json            # npm dependencies and scripts
+  tsconfig.json           # TypeScript compiler config
+  team_formation_api.spec # PyInstaller spec file
+```
+
+**How It Works:**
+1. Electron main process finds a free local port and spawns the PyInstaller-bundled backend
+2. Backend serves the Vue.js frontend as static files and exposes the API
+3. Electron loads `http://127.0.0.1:<port>` in a BrowserWindow
+4. On quit, Electron sends SIGTERM to the backend for graceful shutdown
+
+**Local Development:**
+```bash
+# Build the Vue.js frontend first
+cd ui && npm ci && npm run build && cd ..
+
+# Bundle the backend with PyInstaller
+cd desktop && pip install pyinstaller && pyinstaller team_formation_api.spec --noconfirm && cd ..
+
+# Run the Electron app in dev mode
+cd desktop && npm ci && npm run dev
+```
+
+**Build Commands:**
+```bash
+cd desktop
+npm run dist:mac     # Build macOS DMG (arm64)
+npm run dist:win     # Build Windows NSIS installer (x64)
+npm run dist:linux   # Build Linux AppImage (x64)
+npm run dist         # Build all platforms
+```
+
+**Build Artifacts:**
+- macOS: `Team Formation-<version>-arm64.dmg`
+- Windows: `Team Formation Setup <version>.exe`
+- Linux: `team-formation-<version>.AppImage`
+
+#### CI/CD and GitHub Releases
+
+Desktop builds are automated via GitHub Actions (`.github/workflows/desktop-build.yml`):
+
+**Triggers:**
+- Pushing a git tag matching `v*` (e.g., `git tag v2.0.1 && git push --tags`)
+- Manual trigger via `workflow_dispatch` in the GitHub Actions UI
+
+**Build Pipeline:**
+1. Three parallel jobs build for macOS (arm64), Windows (x64), and Linux (x64)
+2. Each job: installs Python + Node.js, builds the Vue.js frontend, bundles the backend with PyInstaller, runs a smoke test against `/health`, then packages with electron-builder
+3. Platform installers are uploaded as workflow artifacts
+4. A release job creates a **published GitHub Release** with all installers attached
+
+**Downloading Desktop Builds:**
+- Users download installers from the repository's [GitHub Releases](https://docs.github.com/en/repositories/releasing-projects-on-github) page
+- Releases are automatically published when triggered by a version tag
+- Built binaries are **not** checked into the repository — they are built in CI and attached to releases as downloadable assets
+
+**Code Signing:**
+- macOS and Windows code signing is configured in `electron-builder.yml` but currently commented out, pending certificate setup in GitHub Actions secrets
 
 ### Docker Deployment Architecture
 
