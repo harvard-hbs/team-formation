@@ -1,5 +1,23 @@
 # Change Log
 
+## [2.0.1] - 2026-02-20
+
+### Fixed
+
+- Fix API test paths to use `/api/assign_teams` endpoint
+- Remove retired macOS Intel (macos-13) CI build target
+
+### Security
+
+- Update axios to ≥1.13.5 (DoS via `__proto__` key)
+- Update electron to ≥35.7.5 (ASAR integrity bypass)
+- Update electron-builder to ≥26.8.1 (tar path traversal vulnerabilities)
+- Pin starlette ≥0.49.1 (O(n²) DoS and multipart DoS)
+- Pin urllib3 ≥2.6.3 (decompression bomb and redirect vulnerabilities)
+- Pin protobuf ≥6.33.5 (JSON recursion depth bypass)
+- Pin cryptography ≥46.0.5 (subgroup attack on SECT curves)
+- Update ortools to ≥9.15
+
 ## [2.0.0] - 2026-02-20
 
 ### Added

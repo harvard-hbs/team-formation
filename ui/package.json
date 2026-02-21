@@ -11,7 +11,7 @@
     "vue": "^3.5.13",
     "vuetify": "^3.7.5",
     "pinia": "^2.3.0",
-    "axios": "^1.7.9",
+    "axios": "^1.13.5",
     "papaparse": "^5.4.1",
     "chart.js": "^4.4.7",
     "vue-chartjs": "^5.3.3",

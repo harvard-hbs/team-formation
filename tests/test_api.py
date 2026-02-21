@@ -64,7 +64,7 @@ def test_health_endpoint(client):
 def test_assign_teams_valid_request(client, sample_request_data):
     """Test team assignment with a valid request."""
     # Make request to SSE endpoint
-    with client.stream("POST", "/assign_teams", json=sample_request_data) as response:
+    with client.stream("POST", "/api/assign_teams", json=sample_request_data) as response:
         assert response.status_code == 200
         assert "text/event-stream" in response.headers["content-type"]
 
@@ -134,7 +134,7 @@ def test_assign_teams_invalid_constraint_type(client, sample_request_data):
         {"attribute": "gender", "type": "invalid_type", "weight": 1}
     ]
 
-    response = client.post("/assign_teams", json=sample_request_data)
+    response = client.post("/api/assign_teams", json=sample_request_data)
     assert response.status_code == 422  # Unprocessable Entity
 
 
@@ -142,7 +142,7 @@ def test_assign_teams_invalid_target_size(client, sample_request_data):
     """Test that invalid target team sizes are rejected."""
     sample_request_data["target_team_size"] = 2  # Must be > 2
 
-    response = client.post("/assign_teams", json=sample_request_data)
+    response = client.post("/api/assign_teams", json=sample_request_data)
     assert response.status_code == 422  # Unprocessable Entity
 
 
@@ -152,7 +152,7 @@ def test_assign_teams_nonexistent_constraint_attribute(client, sample_request_da
         {"attribute": "nonexistent_attribute", "type": "diversify", "weight": 1}
     ]
 
-    response = client.post("/assign_teams", json=sample_request_data)
+    response = client.post("/api/assign_teams", json=sample_request_data)
     assert response.status_code == 422  # Unprocessable Entity
 
 
@@ -165,7 +165,7 @@ def test_assign_teams_empty_participants(client):
         "max_time": 10,
     }
 
-    response = client.post("/assign_teams", json=request_data)
+    response = client.post("/api/assign_teams", json=request_data)
     assert response.status_code == 422  # Unprocessable Entity
 
 
@@ -174,7 +174,7 @@ def test_assign_teams_with_time_limit(client, sample_request_data):
     # Set a very short time limit
     sample_request_data["max_time"] = 2
 
-    with client.stream("POST", "/assign_teams", json=sample_request_data) as response:
+    with client.stream("POST", "/api/assign_teams", json=sample_request_data) as response:
         assert response.status_code == 200
 
         events = []
@@ -191,7 +191,7 @@ def test_assign_teams_with_time_limit(client, sample_request_data):
 
 def test_assign_teams_progress_events(client, sample_request_data):
     """Test that progress events are sent during optimization."""
-    with client.stream("POST", "/assign_teams", json=sample_request_data) as response:
+    with client.stream("POST", "/api/assign_teams", json=sample_request_data) as response:
         assert response.status_code == 200
 
         progress_events = []
@@ -242,7 +242,7 @@ def test_assign_teams_with_list_attributes(client):
         "max_time": 10,
     }
 
-    with client.stream("POST", "/assign_teams", json=request_data) as response:
+    with client.stream("POST", "/api/assign_teams", json=request_data) as response:
         assert response.status_code == 200
 
         events = []
