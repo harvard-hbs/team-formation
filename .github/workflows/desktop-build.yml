@@ -109,6 +109,15 @@ jobs:
           Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
           exit 1
 
+      - name: Sync desktop version from git tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        working-directory: desktop
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/v}"
+          echo "Setting desktop/package.json version to $VERSION"
+          npm version "$VERSION" --no-git-tag-version
+
       - name: Install Electron dependencies
         working-directory: desktop
         run: npm ci

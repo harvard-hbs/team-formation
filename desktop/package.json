@@ -1,6 +1,6 @@
 {
   "name": "team-formation-desktop",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Desktop application for constraint-based team formation",
   "author": "Brent Benson <bbenson@hbs.edu>",
   "license": "MIT",
