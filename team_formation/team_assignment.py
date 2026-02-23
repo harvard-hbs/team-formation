@@ -173,6 +173,15 @@ class TeamAssignment:
         self.num_participants = len(self.participants)
         """Number of participants"""
 
+        duplicate_attrs = constraints["attribute"][
+            constraints["attribute"].duplicated()
+        ].tolist()
+        if duplicate_attrs:
+            raise ValueError(
+                f"Each attribute may only have one constraint, but the "
+                f"following attributes have duplicates: {duplicate_attrs}"
+            )
+
         self.attr_constraints = constraints.set_index("attribute").to_dict("index")
         """Input variable: constraints with name, type, and priority"""
 
