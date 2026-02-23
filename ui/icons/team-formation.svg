@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="1024"
+  height="1024"
+  viewBox="0 0 1024 1024"
+  version="1.1">
+
+  <!-- Background rounded square -->
+  <rect
+    x="64"
+    y="64"
+    width="896"
+    height="896"
+    rx="192"
+    ry="192"
+    fill="#0F9ED9" />
+
+  <!-- Style constants (for easy tweaking) -->
+  <!--
+    You can change:
+      clusterLeft: color for left clusters
+      clusterRight: color for right clusters
+      lineColor: color for center + lines
+  -->
+  <defs>
+    <style type="text/css"><![CDATA[
+      .cluster-left { fill: #F8F9FB; }
+      .cluster-right { fill: #FFCF70; }
+      .lines-center { stroke: #000000; stroke-width: 32; stroke-linecap: round; }
+      .center-node { fill: #000000; }
+    ]]></style>
+  </defs>
+
+  <!-- Center node -->
+  <!-- Center of the canvas is (512, 512) -->
+  <circle
+    class="center-node"
+    cx="512"
+    cy="512"
+    r="40" />
+
+  <!-- Connecting lines from center to each cluster -->
+  <!-- End points are near each cluster, not touching the dot shapes exactly -->
+  <!-- Top-left line -->
+  <line
+    class="lines-center"
+    x1="512"
+    y1="512"
+    x2="296"
+    y2="296" />
+  <!-- Top-right line -->
+  <line
+    class="lines-center"
+    x1="512"
+    y1="512"
+    x2="728"
+    y2="296" />
+  <!-- Bottom-left line -->
+  <line
+    class="lines-center"
+    x1="512"
+    y1="512"
+    x2="296"
+    y2="728" />
+  <!-- Bottom-right line -->
+  <line
+    class="lines-center"
+    x1="512"
+    y1="512"
+    x2="728"
+    y2="728" />
+
+  <!-- Cluster dot parameters:
+       Radius: 28
+       Each cluster is a 2x2 grid with centers spaced 72px apart
+       (can be tuned later)
+  -->
+
+  <!-- Top-left cluster (4 dots, 2x2), left color -->
+  <g transform="translate(256, 256)">
+    <circle class="cluster-left" cx="-36" cy="-36" r="28" />
+    <circle class="cluster-left" cx="36"  cy="-36" r="28" />
+    <circle class="cluster-left" cx="-36" cy="36"  r="28" />
+    <circle class="cluster-left" cx="36"  cy="36"  r="28" />
+  </g>
+
+  <!-- Top-right cluster, right color -->
+  <g transform="translate(768, 256)">
+    <circle class="cluster-right" cx="-36" cy="-36" r="28" />
+    <circle class="cluster-right" cx="36"  cy="-36" r="28" />
+    <circle class="cluster-right" cx="-36" cy="36"  r="28" />
+    <circle class="cluster-right" cx="36"  cy="36"  r="28" />
+  </g>
+
+  <!-- Bottom-left cluster, left color -->
+  <g transform="translate(256, 768)">
+    <circle class="cluster-left" cx="-36" cy="-36" r="28" />
+    <circle class="cluster-left" cx="36"  cy="-36" r="28" />
+    <circle class="cluster-left" cx="-36" cy="36"  r="28" />
+    <circle class="cluster-left" cx="36"  cy="36"  r="28" />
+  </g>
+
+  <!-- Bottom-right cluster, right color -->
+  <g transform="translate(768, 768)">
+    <circle class="cluster-right" cx="-36" cy="-36" r="28" />
+    <circle class="cluster-right" cx="36"  cy="-36" r="28" />
+    <circle class="cluster-right" cx="-36" cy="36"  r="28" />
+    <circle class="cluster-right" cx="36"  cy="36"  r="28" />
+  </g>
+
+</svg>
