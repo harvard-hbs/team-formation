@@ -533,8 +533,8 @@ class TeamAssignment:
     def create_numeric_clustering_costs_range(self, attr_name):
         """Create costs variables for numeric clustering optimization."""
         parti_vals = self.participants[attr_name]
-        attr_min = parti_vals.min()
-        attr_max = parti_vals.max()
+        attr_min = int(parti_vals.min())
+        attr_max = int(parti_vals.max())
         numeric_clustering_costs = []
         for team_num, team_size in enumerate(self.team_sizes):
             # Create a variable for the team's min, max, range
@@ -555,10 +555,10 @@ class TeamAssignment:
             )
             for parti_id in range(self.num_participants):
                 self.model.add(
-                    team_min <= parti_vals[parti_id]
+                    team_min <= int(parti_vals[parti_id])
                 ).only_enforce_if(self.parti_vars[parti_id]["team"][team_num])
                 self.model.add(
-                    team_max >= parti_vals[parti_id]
+                    team_max >= int(parti_vals[parti_id])
                 ).only_enforce_if(self.parti_vars[parti_id]["team"][team_num])
             self.model.add(team_range == (team_max - team_min))
             numeric_clustering_costs.append(team_range)
@@ -569,8 +569,8 @@ class TeamAssignment:
     def create_numeric_clustering_costs_mad(self, attr_name):
         """Create costs variables for numeric clustering optimization."""
         parti_vals = self.participants[attr_name]
-        attr_min = parti_vals.min()
-        attr_max = parti_vals.max()
+        attr_min = int(parti_vals.min())
+        attr_max = int(parti_vals.max())
         attr_min_dev = 0
         attr_max_dev = attr_max - attr_min
         numeric_clustering_costs = []
@@ -593,7 +593,7 @@ class TeamAssignment:
                     parti_team_val,
                     [
                         self.parti_vars[parti_id]["team"][team_num],
-                        parti_vals[parti_id],
+                        int(parti_vals[parti_id]),
                     ]
                 )
                 team_attr_vals.append(parti_team_val)
@@ -607,7 +607,7 @@ class TeamAssignment:
                 #     parti_dev,
                 #     (team_mean - parti_vals[parti_id]),
                 # )
-                diff_expr = (team_mean - parti_vals[parti_id])
+                diff_expr = (team_mean - int(parti_vals[parti_id]))
                 self.model.add_max_equality(
                     parti_dev,
                     [diff_expr, -diff_expr],

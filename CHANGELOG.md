@@ -1,5 +1,20 @@
 # Change Log
 
+## [2.0.3] - 2026-04-06
+
+### Fixed
+
+- Fix `cluster_numeric` constraint crash when numeric column contains float values
+  (e.g., `np.float64` from CSV import) by casting to `int` before passing to
+  OR-Tools CP-SAT `Domain` constructor
+
+## [2.0.2] - 2026-03-23
+
+### Modified
+
+- Updated uv.lock dependencies
+- Validate constraints have unique attributes before solving
+
 ## [2.0.1] - 2026-02-20
 
 ### Fixed
