@@ -16,19 +16,23 @@ This is a Python package for constraint-based team formation that uses Google OR
 ## Common Development Commands
 
 ### Testing
+
+Requires the dev dependencies (see Development Setup below) — `pytest` is in
+the `dev` extra, not the default install.
+
 ```bash
-# Run all tests
+# Run all tests (the full suite takes ~40 minutes; test_big.py dominates)
 make test
 # or
-pytest
+uv run pytest
 
 # Run tests with info-level logging
 make test-info
 # or
-pytest --log-cli-level=INFO
+uv run pytest --log-cli-level=INFO
 
 # Run specific test
-pytest tests/test_small.py
+uv run pytest tests/test_small.py
 ```
 
 ### Building and Distribution
@@ -36,7 +40,7 @@ pytest tests/test_small.py
 # Build package
 make build
 # or
-python -m build
+uv build
 
 # Clean distribution files
 make dist-clean
@@ -74,10 +78,10 @@ python -c "from team_formation.team_assignment import TeamAssignment; print('API
 
 ### Development Setup
 ```bash
-# Install development dependencies
+# Create the virtualenv and install the package with dev dependencies
 make install
 # or
-pip install -r requirements-dev.txt
+uv sync --extra dev
 ```
 
 ## Architecture Overview
