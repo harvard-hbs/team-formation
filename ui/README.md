@@ -10,6 +10,7 @@ A modern web interface for the Team Formation Service that enables interactive t
 - **Real-time Progress Tracking**: Server-Sent Events (SSE) streaming of optimization progress
 - **Interactive Results**: View team assignments with grouping, filtering, and export capabilities
 - **Data Visualization**: Charts and graphs showing team composition and distribution
+- **Dashboard Download**: One-click `.xlsx` export shaped for HBS Online Learner Dashboard upload
 - **Responsive Design**: Works on desktop, tablet, and mobile devices
 
 ## Tech Stack
@@ -21,6 +22,7 @@ A modern web interface for the Team Formation Service that enables interactive t
 - **Language**: TypeScript
 - **Charts**: Chart.js with vue-chartjs
 - **CSV Parsing**: PapaParse
+- **Excel Export**: ExcelJS (loaded on demand)
 - **SSE Client**: @microsoft/fetch-event-source
 
 ## Getting Started
@@ -162,6 +164,45 @@ The UI validates:
 Export team assignments in multiple formats:
 - **CSV**: Compatible with Excel, Google Sheets
 - **JSON**: For programmatic processing
+- **Dashboard Download**: `.xlsx` upload file for the HBS Online Learner Dashboard
+
+### Dashboard Download
+
+The **Dashboard Download** button in the roster toolbar produces the spreadsheet
+HBS Online Program Services uploads into the Learner Dashboard. It appears only
+after teams have been assigned, because the `Team Name` column is derived from
+the team assignment.
+
+The exported workbook contains exactly these seven columns, in this order, and
+nothing else. Every other roster column, including constraint-only columns, is
+dropped.
+
+| Roster column | Exported header | Notes |
+| --- | --- | --- |
+| `first_name` | `First Name` | |
+| `last_name` | `Last Name` | |
+| `email_id` | `Business Email Address` | |
+| `hbx_id` | `HBS Online ID` | |
+| `wave_code` | `Bodhi Wave Code` | |
+| `profile_image_url` | `Profile Photo URL` | |
+| `team_number` | `Team Name` | Rendered as `Team N`, counting from 1 |
+
+Roster column names are matched **without regard to case**, so a roster
+exported with `FIRST_NAME`, `LAST_NAME`, and so on works exactly as one using
+`first_name`. If a roster somehow carries the same column in two casings, the
+one matching the contract name exactly wins. The exported header names never
+vary with the roster's casing.
+
+All seven columns must be present or the export is refused with an error naming
+the missing ones under their canonical lower-case names. A column that exists
+but is blank for some participants is fine; those cells are exported empty.
+
+Rows are ordered by team, and the file is named
+`dashboard-roster-<timestamp>.xlsx` so repeated downloads do not overwrite one
+another.
+
+The column contract lives in one place, `src/services/dashboardExport.ts`. If
+the Dashboard changes its expected schema, edit `DASHBOARD_COLUMNS` there.
 
 ## UI Wireframe
 

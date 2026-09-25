@@ -1,5 +1,22 @@
 # Change Log
 
+## [Unreleased]
+
+### Added
+
+- **HBS Online Dashboard Download** button in the roster toolbar of the web and
+  desktop UI. Exports the assigned roster as a single-sheet `.xlsx` file for
+  upload into the HBS Online Learner Dashboard, containing only the seven
+  Dashboard columns: `First Name`, `Last Name`, `Business Email Address`,
+  `HBS Online ID`, `Bodhi Wave Code`, `Profile Photo URL`, and `Team Name`
+  (rendered as `Team N`, counting from 1). Requires the roster to carry
+  `first_name`, `last_name`, `email_id`, `hbx_id`, `wave_code`, and
+  `profile_image_url`; roster column names are matched without regard to case,
+  so `FIRST_NAME` and `first_name` are equivalent. A missing column is reported
+  under its canonical lower-case name without producing a file.
+- ExcelJS dependency in the frontend, dynamically imported so it is fetched
+  only on first export and stays out of the initial bundle
+
 ## [2.0.3] - 2026-04-06
 
 ### Fixed

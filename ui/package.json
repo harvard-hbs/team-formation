@@ -13,6 +13,7 @@
     "pinia": "^2.3.0",
     "axios": "^1.13.5",
     "papaparse": "^5.4.1",
+    "exceljs": "^4.4.0",
     "chart.js": "^4.4.7",
     "vue-chartjs": "^5.3.3",
     "@microsoft/fetch-event-source": "^2.0.1"
