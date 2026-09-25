@@ -117,3 +117,14 @@ macOS and Windows signing is scaffolded but disabled. The commented blocks in
 environment variables in the workflow mark what needs to be filled in once
 certificates are available as repository secrets. Until then, users must
 bypass Gatekeeper and SmartScreen warnings on first launch.
+
+## HBS Online Dashboard Download
+
+The roster toolbar carries a **Dashboard Download** button that exports the
+assigned roster as an `.xlsx` file shaped for upload into the HBS Online
+Learner Dashboard. It is a frontend feature and needs no Electron code: the
+shell loads the same built frontend, so the button ships with any build made
+after `ui/dist` was rebuilt.
+
+See the Dashboard Download section of [ui/README.md](../ui/README.md) for the
+column contract and behavior.

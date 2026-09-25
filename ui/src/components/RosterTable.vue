@@ -28,12 +28,36 @@
           color="success"
           size="small"
           prepend-icon="mdi-code-json"
+          class="mr-2"
           @click="handleExportJSON"
         >
           Export JSON
         </v-btn>
+        <v-btn
+          v-if="store.results"
+          color="secondary"
+          size="small"
+          prepend-icon="mdi-microsoft-excel"
+          :loading="exporting"
+          @click="handleDashboardDownload"
+        >
+          Dashboard Download
+        </v-btn>
       </div>
     </v-card-title>
+
+    <!-- Dashboard export errors, shown next to the button that caused them -->
+    <v-card-text v-if="dashboardError" class="pb-0">
+      <v-alert
+        type="error"
+        variant="tonal"
+        density="compact"
+        closable
+        @click:close="dashboardError = null"
+      >
+        {{ dashboardError }}
+      </v-alert>
+    </v-card-text>
 
     <!-- Hidden file input -->
     <input
@@ -113,6 +137,7 @@
 import { ref, computed } from 'vue'
 import { useTeamFormationStore } from '@/stores/teamFormation'
 import { exportToCSV, exportToJSON, parseCSV, validateParticipantData } from '@/services/csvParser'
+import { exportToDashboardXlsx, findMissingColumns } from '@/services/dashboardExport'
 
 const store = useTeamFormationStore()
 
@@ -120,6 +145,8 @@ const search = ref('')
 const itemsPerPage = ref(25)
 const fileInput = ref<HTMLInputElement | null>(null)
 const loading = ref(false)
+const exporting = ref(false)
+const dashboardError = ref<string | null>(null)
 
 // Generate headers dynamically from participant data
 const headers = computed(() => {
@@ -161,6 +188,37 @@ function handleExportJSON() {
     ? `team-assignments-${Date.now()}.json`
     : `participants-${Date.now()}.json`
   exportToJSON(data, filename)
+}
+
+// Export the HBS Online Learner Dashboard roster. Requires assignment
+// results, because the Team Name column is derived from team_number.
+async function handleDashboardDownload() {
+  const data = store.results
+
+  if (!data) return
+
+  const missing = findMissingColumns(data)
+
+  if (missing.length > 0) {
+    dashboardError.value =
+      `Cannot create the Dashboard roster. The following required ` +
+      `column${missing.length === 1 ? ' is' : 's are'} missing from the ` +
+      `roster: ${missing.join(', ')}.`
+    return
+  }
+
+  dashboardError.value = null
+  exporting.value = true
+
+  try {
+    await exportToDashboardXlsx(data, `dashboard-roster-${Date.now()}.xlsx`)
+  } catch (error) {
+    dashboardError.value =
+      `Failed to create the Dashboard roster: ` +
+      `${error instanceof Error ? error.message : 'unknown error'}`
+  } finally {
+    exporting.value = false
+  }
 }
 
 function triggerFileInput() {
