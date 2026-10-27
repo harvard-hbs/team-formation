@@ -224,6 +224,32 @@ difference of the teams from ideal configuration, multiplying that
 difference by the weight of the constraint. In this way you can
 prioritize the most important constraints over less important ones.
 
+## Missing Data
+
+Before searching for solutions, every participant is checked for a
+value in each column referenced by a constraint. Columns not used by
+any constraint are not checked. A value is considered missing if it
+is blank (empty or only whitespace), `null`/`NaN`, or absent from the
+participant record. For multi-valued `_list` columns an empty list is
+also missing. Columns used by a `cluster_numeric` constraint must
+also contain numbers; numeric text such as `"42"` is accepted.
+
+If any problems are found, no teams are created and a single error
+lists every affected column with the constraint type and the rows to
+fix. Rows are numbered as in the uploaded file, with the header as
+row 1, and include the participant identifier when the data has an
+`id`, `ID`, `participant_id`, `student_id`, or `email` column:
+
+```
+Participant data is missing or has invalid values for attributes used by the constraints:
+- gender (diversify): 2 rows missing a value: row 3 (id 1002), row 7 (id 1006)
+- age (cluster_numeric): 1 row with a non-numeric value: row 4 (id 1003) "unknown"
+```
+
+At most 10 rows are listed per column, followed by "and N more". The
+REST API sends this message in its `error` event, along with a
+`details` list that contains every affected row.
+
 ## Search for Solutions
 
 Once the data has been loaded, the settings made, and the constraints

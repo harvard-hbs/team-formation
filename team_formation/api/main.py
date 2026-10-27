@@ -16,7 +16,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from sse_starlette.sse import EventSourceResponse
 
-from team_formation.team_assignment import TeamAssignment
+from team_formation.team_assignment import ParticipantDataError, TeamAssignment
 from team_formation.api.callbacks import SSESolutionCallback
 from team_formation.api.models import (
     TeamAssignmentRequest,
@@ -274,10 +274,14 @@ async def event_generator(request: TeamAssignmentRequest):
     except Exception as e:
         logger.error(f"Error during team assignment: {str(e)}", exc_info=True)
 
-        # Send error event
+        # Send error event, with per-attribute details for data problems
+        details = None
+        if isinstance(e, ParticipantDataError):
+            details = [issue.to_dict() for issue in e.issues]
         error_event = ProgressEvent(
             event_type="error",
             message=str(e),
+            details=details,
         )
 
         yield {

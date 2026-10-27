@@ -75,9 +75,12 @@
 # keys, a type of `diversify` or `cluster`, and a numeric `weight`.
 
 import logging
+import math
 import re
 import sys
+import numpy as np
 import pandas as pd
+from dataclasses import dataclass, field
 from itertools import chain
 from collections import Counter, defaultdict
 
@@ -182,6 +185,10 @@ class TeamAssignment:
                 f"following attributes have duplicates: {duplicate_attrs}"
             )
 
+        issues = validate_participants(self.participants, constraints)
+        if issues:
+            raise ParticipantDataError(issues)
+
         self.attr_constraints = constraints.set_index("attribute").to_dict("index")
         """Input variable: constraints with name, type, and priority"""
 
@@ -202,6 +209,11 @@ class TeamAssignment:
                     f"Unknown constraint type '{ct_type}' on attribute '{attr_name}'"
                 )
                 raise ValueError("Unknown constraint type", ct_type)
+
+        # Validation accepts numeric strings like "42"; convert them so the
+        # numeric clustering costs can use the values directly.
+        for attr_name in self.numeric_attr_names:
+            self.participants[attr_name] = pd.to_numeric(self.participants[attr_name])
 
         #: Input variable: desired target team size
         self.target_team_size = target_team_size
@@ -758,6 +770,159 @@ class SolutionCallback(cp_model.CpSolverSolutionCallback):
 # non-target-sized teams should be larger.
 
 
+# ## Validating Participant Data
+#
+# Before building the model we check that every participant has a
+# usable value for each attribute referenced by a constraint. Missing
+# values would otherwise surface as low-level errors from the model
+# construction (e.g., `cannot convert float NaN to integer`) or be
+# silently treated as a category of their own. All problems are
+# collected and reported together, identifying the affected rows by
+# their position in the input file (the header is row 1) and by
+# identifier value when an identifier column is present.
+
+ID_COLUMN_CANDIDATES = ["id", "ID", "participant_id", "student_id", "email"]
+"""Columns checked, in order, for a participant identifier"""
+
+MAX_ROWS_IN_MESSAGE = 10
+"""Maximum number of affected rows listed per attribute in an error message"""
+
+PROBLEM_MISSING = "missing"
+PROBLEM_INVALID_NUMBER = "invalid_number"
+
+
+@dataclass
+class AttributeIssue:
+    """Missing or invalid values for one constrained attribute"""
+
+    attribute: str
+    constraint_type: str
+    problem: str
+    rows: list = field(default_factory=list)
+    """Affected rows as dicts with `row`, `id`, and (if invalid) `value`"""
+
+    @property
+    def count(self):
+        return len(self.rows)
+
+    def to_dict(self):
+        return {
+            "attribute": self.attribute,
+            "constraint_type": self.constraint_type,
+            "problem": self.problem,
+            "count": self.count,
+            "rows": self.rows,
+        }
+
+    def describe(self):
+        noun = "row" if self.count == 1 else "rows"
+        if self.problem == PROBLEM_INVALID_NUMBER:
+            summary = f"{self.count} {noun} with a non-numeric value"
+        else:
+            summary = f"{self.count} {noun} missing a value"
+        row_descs = [describe_row(row) for row in self.rows[:MAX_ROWS_IN_MESSAGE]]
+        if self.count > MAX_ROWS_IN_MESSAGE:
+            row_descs.append(f"and {self.count - MAX_ROWS_IN_MESSAGE} more")
+        return (
+            f"- {self.attribute} ({self.constraint_type}): "
+            f"{summary}: {', '.join(row_descs)}"
+        )
+
+
+class ParticipantDataError(ValueError):
+    """Participant data is missing or has invalid values needed by the constraints"""
+
+    def __init__(self, issues):
+        self.issues = issues
+        lines = [
+            "Participant data is missing or has invalid values for "
+            "attributes used by the constraints:"
+        ]
+        lines.extend(issue.describe() for issue in issues)
+        super().__init__("\n".join(lines))
+
+
+def describe_row(row):
+    desc = f"row {row['row']}"
+    if row.get("id") is not None:
+        desc += f" (id {row['id']})"
+    if "value" in row:
+        desc += f' "{row["value"]}"'
+    return desc
+
+
+def is_missing_value(value):
+    """Return True if a participant attribute value should be treated as missing"""
+    if isinstance(value, (list, tuple, set)):
+        return len(value) == 0
+    if isinstance(value, str):
+        return value.strip() == ""
+    try:
+        return bool(pd.isna(value))
+    except (TypeError, ValueError):
+        return False
+
+
+def is_valid_number(value):
+    """Return True if a value can be used by a numeric constraint"""
+    if isinstance(value, (bool, np.bool_)):
+        return False
+    try:
+        num = float(pd.to_numeric(value))
+    except (TypeError, ValueError):
+        return False
+    return math.isfinite(num)
+
+
+def clean_id(value):
+    """Convert an identifier to a plain, JSON-friendly value (None if missing)"""
+    if is_missing_value(value):
+        return None
+    if isinstance(value, np.generic):
+        value = value.item()
+    if isinstance(value, float) and value.is_integer():
+        value = int(value)
+    return value
+
+
+def validate_participants(participants, constraints):
+    """Check participant values for every constrained attribute
+
+    Returns a list of `AttributeIssue`, empty if the data is usable.
+    """
+    num_participants = len(participants)
+    id_col = next(
+        (col for col in ID_COLUMN_CANDIDATES if col in participants.columns), None
+    )
+    if id_col is None:
+        ids = [None] * num_participants
+    else:
+        ids = [clean_id(value) for value in participants[id_col]]
+
+    issues = []
+    for _, constraint in constraints.iterrows():
+        attr_name = constraint["attribute"]
+        ct_type = constraint["type"]
+        if attr_name in participants.columns:
+            values = list(participants[attr_name])
+        else:
+            values = [None] * num_participants
+        missing = AttributeIssue(attr_name, ct_type, PROBLEM_MISSING)
+        invalid = AttributeIssue(attr_name, ct_type, PROBLEM_INVALID_NUMBER)
+        for pos, value in enumerate(values):
+            row = {"row": pos + 2, "id": ids[pos]}
+            if is_missing_value(value):
+                missing.rows.append(row)
+            elif (
+                ct_type == TeamAssignment.CT_CLUSTER_NUMERIC
+                and not is_valid_number(value)
+            ):
+                row["value"] = str(value)[:30]
+                invalid.rows.append(row)
+        issues.extend(issue for issue in (missing, invalid) if issue.rows)
+    return issues
+
+
 def calc_team_sizes(pop_size, target_size, less_than=True):
     if less_than:
         num_teams = (pop_size + target_size - 1) // target_size
@@ -802,8 +967,6 @@ def make_attr_value_name(attr_name, cat_value, verb):
 
 
 def categories_to_bool_vars(attr_name, cat_values):
-    if sum(cat_values.isnull()) > 0:
-        raise ValueError("Missing values for attribute", attr_name)
     if isinstance(cat_values.iloc[0], list):
         unique_cats = sorted(set(chain.from_iterable(cat_values)))
         verb = "has"

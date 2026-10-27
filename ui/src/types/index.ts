@@ -48,6 +48,16 @@ export interface CompleteEvent {
 export interface ErrorEvent {
   event_type: 'error'
   message: string
+  details?: ParticipantDataIssue[] | null
+}
+
+// Missing or invalid participant values for one constrained attribute
+export interface ParticipantDataIssue {
+  attribute: string
+  constraint_type: string
+  problem: 'missing' | 'invalid_number'
+  count: number
+  rows: { row: number; id: string | number | null; value?: string }[]
 }
 
 // Union type for all SSE events
