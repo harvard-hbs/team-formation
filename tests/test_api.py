@@ -296,3 +296,66 @@ def test_request_model_validation():
             ],
             target_team_size=3,
         )
+
+
+def collect_events(client, request_data):
+    """POST a request and return the list of SSE events as dicts."""
+    events = []
+    with client.stream("POST", "/api/assign_teams", json=request_data) as response:
+        assert response.status_code == 200
+        for line in response.iter_lines():
+            if line.startswith("event:"):
+                event_type = line.split(":", 1)[1].strip()
+            elif line.startswith("data:"):
+                data = line.split(":", 1)[1].strip()
+                events.append({"type": event_type, "data": json.loads(data)})
+    return events
+
+
+def test_assign_teams_missing_numeric_value(client, sample_request_data):
+    """A null cluster_numeric value yields a readable validation error event."""
+    sample_request_data["participants"][2]["years_experience"] = None
+    sample_request_data["participants"][5]["gender"] = None
+
+    events = collect_events(client, sample_request_data)
+
+    assert [e["type"] for e in events if e["type"] == "complete"] == []
+    error = events[-1]
+    assert error["type"] == "error"
+    message = error["data"]["message"]
+    assert "NaN" not in message
+    assert "years_experience (cluster_numeric): 1 row missing a value: row 4 (id 10)" in message
+    assert "gender (diversify): 1 row missing a value: row 7 (id 20)" in message
+
+    details = error["data"]["details"]
+    assert [d["attribute"] for d in details] == ["gender", "years_experience"]
+    assert details[1] == {
+        "attribute": "years_experience",
+        "constraint_type": "cluster_numeric",
+        "problem": "missing",
+        "count": 1,
+        "rows": [{"row": 4, "id": 10}],
+    }
+
+
+def test_assign_teams_blank_string_value(client, sample_request_data):
+    """A blank string (as from a CSV cell) in a diversify column is reported as missing."""
+    sample_request_data["participants"][0]["gender"] = "  "
+
+    events = collect_events(client, sample_request_data)
+
+    error = events[-1]
+    assert error["type"] == "error"
+    assert "gender (diversify): 1 row missing a value: row 2 (id 8)" in error["data"]["message"]
+    assert error["data"]["details"][0]["problem"] == "missing"
+
+
+def test_assign_teams_other_errors_have_no_details(client, sample_request_data):
+    """Errors unrelated to participant data do not include details."""
+    sample_request_data["participants"] = sample_request_data["participants"][:2]
+
+    events = collect_events(client, sample_request_data)
+
+    error = events[-1]
+    assert error["type"] == "error"
+    assert error["data"]["details"] is None

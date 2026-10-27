@@ -104,7 +104,7 @@
       <v-alert
         v-if="store.errorMessage"
         type="error"
-        class="mt-4"
+        class="mt-4 error-message"
         closable
         @click:close="store.clearError()"
       >
@@ -196,6 +196,10 @@ async function handleCreateTeams() {
 </script>
 
 <style scoped>
+.error-message {
+  white-space: pre-line;
+}
+
 .team-size-input {
   max-width: 100px;
   text-align: center;

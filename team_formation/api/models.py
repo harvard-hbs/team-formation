@@ -1,6 +1,6 @@
 """Pydantic models for the team formation API."""
 
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 
@@ -124,3 +124,7 @@ class ProgressEvent(BaseModel):
     wall_time: float = Field(default=0.0, description="Wall clock time in seconds")
     num_conflicts: int = Field(default=0, description="Number of conflicts in search")
     message: str = Field(default="", description="Human-readable progress message")
+    details: Optional[List[Dict[str, Any]]] = Field(
+        default=None,
+        description="Structured error details, e.g. per-attribute missing or invalid participant values",
+    )

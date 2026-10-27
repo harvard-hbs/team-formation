@@ -6,7 +6,7 @@ import time
 import threading
 
 import team_formation
-from team_assignment import TeamAssignment, SolutionCallback
+from team_assignment import TeamAssignment, SolutionCallback, ParticipantDataError
 from team_formation.working_time import working_times_hours
 from ortools.sat.python import cp_model
 
@@ -30,7 +30,10 @@ def create_list_columns(df):
     return new_df
 
 def split_list_column(series):
-    new_series = series.map(lambda str_val: str_val.split(";"))
+    # Blank cells become empty lists, which validation reports as missing
+    new_series = series.map(
+        lambda str_val: str_val.split(";") if isinstance(str_val, str) else []
+    )
     return new_series
 
 def constraints_are_valid():
@@ -152,12 +155,16 @@ def generate_teams_callback():
     less_than_target = (st.session_state["over_under_size"] == "Under")
     print("Generating teams with constraints:")
     print(st.session_state["constraints"])
-    team_assignment = TeamAssignment(
-        st.session_state["roster"],
-        st.session_state["constraints"],
-        st.session_state["target_team_size"],
-        less_than_target=less_than_target,
-    )
+    try:
+        team_assignment = TeamAssignment(
+            st.session_state["roster"],
+            st.session_state["constraints"],
+            st.session_state["target_team_size"],
+            less_than_target=less_than_target,
+        )
+    except ParticipantDataError as e:
+        st.error(str(e))
+        return
     st.session_state["team_assignment"] = team_assignment
     stop_after_seconds = st.session_state["stop_after_seconds"]
 

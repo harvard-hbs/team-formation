@@ -1,5 +1,35 @@
 # Change Log
 
+## [2.2.0] - 2026-10-27
+
+### Added
+
+- Validate participant data before solving. Every column referenced by a
+  constraint is checked for missing values, and `cluster_numeric` columns
+  are checked for non-numeric values. One error lists each affected column
+  and identifies the rows by file row number (the header is row 1) and by
+  participant id, in place of low-level errors such as
+  `cannot convert float NaN to integer`. The REST API `error` event includes
+  a structured `details` list, and the web, desktop, and Streamlit UIs show
+  the message one column per line.
+
+### Changed
+
+- **Behavior change:** blank strings and empty `_list` values in constrained
+  columns are now reported as missing. Previously they were accepted and
+  treated as a category of their own (or matched no cluster value).
+- Numeric text such as `"42"` in `cluster_numeric` columns is converted to a
+  number before solving.
+
+### Fixed
+
+- Streamlit UI no longer fails on CSV upload when a `_list` cell is blank.
+
+### Security
+
+- Updated Python, UI, and desktop dependencies to resolve Dependabot alerts
+  (including Electron 42 and electron-builder 26.18).
+
 ## [2.1.0] - 2026-09-24
 
 ### Added
